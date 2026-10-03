@@ -1,0 +1,156 @@
+# contains only the 'light' definitions with its dependencies.
+# is included in main.yaml 
+
+output:
+  - platform: ledc
+    pin: GPIO13
+    id: power_led_1_output
+    frequency: 1000Hz
+
+  - platform: ledc
+    pin: GPIO5
+    id: power_led_2_output
+    frequency: 1000Hz
+
+  - platform: ledc
+    pin: GPIO19
+    id: power_led_3_output
+    frequency: 1000Hz
+
+  - platform: ledc
+    pin: GPIO18
+    id: power_led_4_output
+    frequency: 1000Hz
+
+  - platform: ledc
+    pin: GPIO26
+    id: power_led_5_output
+    frequency: 1000Hz
+
+
+light:
+  - platform: monochromatic
+    name: "Power LED 1"
+    id: power_led_1
+    output: power_led_1_output
+    internal: true
+    effects:
+      - flicker:
+          name: "flicker"
+          alpha: 95%
+          intensity: 4%
+      - lambda:
+          name: "flash"
+          update_interval: 50ms   # equal to flash length
+          lambda: |-
+            if (initial_run) {
+                auto call = it.turn_on();
+                call.set_transition_length(0);
+                call.set_brightness(1.0);
+                call.perform();
+            } else {
+                auto call = it.turn_off();
+                call.set_transition_length(0);
+                call.perform();
+            }
+
+  - platform: monochromatic
+    name: "Power LED 2"
+    id: power_led_2
+    output: power_led_2_output
+    internal: true
+    effects:
+      - flicker:
+          name: "flicker"
+          alpha: 95%
+          intensity: 4%
+      - lambda:
+          name: "flash"
+          update_interval: 50ms   # equal to flash length
+          lambda: |-
+            if (initial_run) {
+                auto call = it.turn_on();
+                call.set_transition_length(0);
+                call.set_brightness(1.0);
+                call.perform();
+            } else {
+                auto call = it.turn_off();
+                call.set_transition_length(0);
+                call.perform();
+            }
+
+  - platform: monochromatic
+    name: "Power LED 3"
+    id: power_led_3
+    output: power_led_3_output
+    internal: true
+    effects:
+      - flicker:
+          name: "flicker"
+          alpha: 95%
+          intensity: 4%
+      - lambda:
+          name: "flash"
+          update_interval: 50ms   # equal to flash length
+          lambda: |-
+            if (initial_run) {
+                auto call = it.turn_on();
+                call.set_transition_length(0);
+                call.set_brightness(1.0);
+                call.perform();
+            } else {
+                auto call = it.turn_off();
+                call.set_transition_length(0);
+                call.perform();
+            }
+
+  - platform: monochromatic
+    name: "Power LED 4"
+    id: power_led_4
+    output: power_led_4_output
+    internal: true
+    effects:
+      - flicker:
+          name: "flicker"
+          alpha: 95%
+          intensity: 4%
+      - lambda:
+          name: "flash"
+          update_interval: 50ms   # equal to flash length
+          lambda: |-
+            if (initial_run) {
+                auto call = it.turn_on();
+                call.set_transition_length(0);
+                call.set_brightness(1.0);
+                call.perform();
+            } else {
+                auto call = it.turn_off();
+                call.set_transition_length(0);
+                call.perform();
+            }
+
+  - platform: monochromatic
+    name: "Power LED 5"
+    id: power_led_5
+    output: power_led_5_output
+    internal: true
+    effects:
+      - flicker:
+          name: "flicker"
+          alpha: 95%
+          intensity: 4%
+      - lambda:
+          name: "flash"
+          update_interval: 50ms   # equal to flash length
+          lambda: |-
+            if (initial_run) {
+                auto call = it.turn_on();
+                call.set_transition_length(0);
+                call.set_brightness(1.0);
+                call.perform();
+            } else {
+                auto call = it.turn_off();
+                call.set_transition_length(0);
+                call.perform();
+            }
+

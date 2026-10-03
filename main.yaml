@@ -64,8 +64,9 @@ wifi:
     password: !secret wifi_wohnzimmer_password
 
   domain: "${local_domain}"
+  use_address: 192.168.178.169
 
-  #output_power: 14dB   # https://esphome.io/guides/faq/#brownout-detector-was-triggered
+  output_power: 14dB   # https://esphome.io/guides/faq/#brownout-detector-was-triggered
   
   ap:
     ssid: "${device_name} Hotspot"
@@ -76,8 +77,8 @@ captive_portal:
 
 uart:
   id: dfplayer_uart
-  tx_pin: GPIO16
-  rx_pin: GPIO17
+  tx_pin: GPIO17
+  rx_pin: GPIO16
   baud_rate: 9600
 
 dfplayer:
@@ -115,6 +116,89 @@ button:
     icon: mdi:stop
     on_press:
       - dfplayer.stop
+
+
+packages:
+  - !include lights.yaml
+
+select:
+  - platform: template
+    name: "Power-LED Effekt"
+    id: power_led_effect
+    icon: mdi:lightbulb-auto
+    optimistic: true
+    options:
+      - "Aus"
+      - "Kerzenflackern"
+      - "Blitz"
+
+    set_action:
+      - delay: 50ms
+      - if:
+          condition:
+            select.is:
+              id: power_led_effect
+              options: "Aus"
+          then:
+            - light.turn_off: power_led_1
+            - light.turn_off: power_led_2
+            - light.turn_off: power_led_3
+            - light.turn_off: power_led_4
+            - light.turn_off: power_led_5
+      - if:
+          condition:
+            select.is:
+              id: power_led_effect
+              options: "Kerzenflackern"
+          then:
+
+            - light.turn_on:
+                id: power_led_1
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_2
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_3
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_4
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_5
+                effect: flicker
+                brightness: 35%
+      - if:
+          condition:
+            select.is:
+              id: power_led_effect
+              options: "Blitz"
+          then:
+            - light.turn_on:
+                id: power_led_1
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_2
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_3
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_4
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_5
+                effect: flash
+            - delay: 100ms
+            - select.first: power_led_effect
 
 
 
