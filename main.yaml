@@ -22,6 +22,7 @@ esp32:
       sram1_as_iram: true
 
 logger:
+  baud_rate: 0
 
 api:
   encryption:
@@ -76,10 +77,16 @@ captive_portal:
 
 
 uart:
-  id: dfplayer_uart
-  tx_pin: GPIO17
-  rx_pin: GPIO16
-  baud_rate: 9600
+  - id: dfplayer_uart
+    tx_pin: GPIO3
+    rx_pin: GPIO1
+    baud_rate: 9600
+  - id: uart_ld2410
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+    parity: NONE
+    stop_bits: 1
+    baud_rate: 256000
 
 dfplayer:
   uart_id: dfplayer_uart
@@ -100,7 +107,6 @@ number:
     set_action:
       - dfplayer.set_volume:
           volume: !lambda "return (int) round(x * 30.0 / 100.0);"
-
 
 button:
   - platform: template
@@ -194,10 +200,25 @@ select:
 
 
 
-### Diagnostic ###
+ld2410:
+  uart_id: uart_ld2410
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+
+
 binary_sensor:
   - platform: status
     name: "Status"
+
+  - platform: ld2410
+    has_target:
+      name: "Anwesenheit"
+      filters:
+        - delayed_on: 200ms
+        - delayed_off: 2s
 
 sensor:
   - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
@@ -216,3 +237,17 @@ sensor:
     entity_category: "diagnostic"
     device_class: ""
     icon: mdi:wifi
+
+  - platform: ld2410
+    detection_distance:
+      name: "Bewegungserkennung Abstand"
+      id: ld2410_distance
+      filters:
+        - throttle: 30s
+
+  - platform: bh1750
+    name: "Umgebungshelligkeit"
+    id: ambient_light
+    address: 0x23
+    update_interval: 30s
+
