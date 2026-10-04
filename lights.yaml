@@ -310,6 +310,78 @@ globals:
     initial_value: '5000'
 
 
+select:
+  - platform: template
+    name: "Power-LED Effekt"
+    id: power_led_effect
+    icon: mdi:lightbulb-auto
+    optimistic: true
+    options:
+      - "Aus"
+      - "Kerzenflackern"
+      - "Blitz"
+    on_value:
+      - if:
+          condition:
+            lambda: 'return i == 0;'
+          then:
+            - light.turn_off: power_led_1
+            - light.turn_off: power_led_2
+            - light.turn_off: power_led_3
+            - light.turn_off: power_led_4
+            - light.turn_off: power_led_5
+      - if:
+          condition:
+            lambda: 'return i == 1;'
+          then:
+
+            - light.turn_on:
+                id: power_led_1
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_2
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_3
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_4
+                effect: flicker
+                brightness: 35%
+            - light.turn_on:
+                id: power_led_5
+                effect: flicker
+                brightness: 35%
+      - if:
+          condition:
+            lambda: 'return i == 2;'
+          then:
+            - light.turn_on:
+                id: power_led_1
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_2
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_3
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_4
+                effect: flash
+            - delay: 100ms
+            - light.turn_on:
+                id: power_led_5
+                effect: flash
+            - delay: 100ms
+            - select.first: power_led_effect
+
+
 script:
   - id: partition_light
     parameters:
