@@ -166,7 +166,7 @@ light:
         to: 18
     effects:
       - addressable_lambda:
-          name: "Color Wander"
+          name: color_wandering
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -203,7 +203,7 @@ light:
         to: 36
     effects:
       - addressable_lambda:
-          name: "Color Wander"
+          name: color_wandering
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -240,7 +240,7 @@ light:
         to: 53
     effects:
       - addressable_lambda:
-          name: "Color Wander"
+          name: color_wandering
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -279,11 +279,11 @@ light:
     #internal: true
     effects:
       - flicker:
-          name: "flicker"
+          name: "Flicker"
           alpha: 95%
           intensity: 4%
       - addressable_lambda:
-          name: "Color Wander"
+          name: "Color Wandering"
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -308,4 +308,104 @@ globals:
     type: uint32_t
     restore_value: no
     initial_value: '5000'
+
+
+script:
+  - id: partition_light
+    parameters:
+      partition_bits: int
+      brightness: float
+      red: float
+      green: float
+      blue: float
+    then:
+      # 0 = all off
+      - if:
+          condition:
+            lambda: 'return partition_bits == 0;'
+          then:
+            - light.turn_off:
+                id: led_door
+            - light.turn_off:
+                id: led_bay_1
+            - light.turn_off:
+                id: led_small_window
+            - light.turn_off:
+                id: led_bay_2
+            - light.turn_off:
+                id: led_roof_1
+            - light.turn_off:
+                id: led_roof_2
+
+      # bit 0 = led_door
+      - if:
+          condition:
+            lambda: 'return partition_bits & 1;'
+          then:
+            - light.turn_on:
+                id: led_door
+                brightness: !lambda 'return brightness/100;'
+                red: !lambda 'return red/255;'
+                green: !lambda 'return green/255;'
+                blue: !lambda 'return blue/255;'
+
+      # bit 1 = led_bay_1
+      - if:
+          condition:
+            lambda: 'return partition_bits & 2;'
+          then:
+            - light.turn_on:
+                id: led_bay_1
+                brightness: !lambda 'return brightness/100;'
+                red: !lambda 'return red/255;'
+                green: !lambda 'return green/255;'
+                blue: !lambda 'return blue/255;'
+
+      # bit 2 = led_small_window
+      - if:
+          condition:
+            lambda: 'return partition_bits & 4;'
+          then:
+            - light.turn_on:
+                id: led_small_window
+                brightness: !lambda 'return brightness/100;'
+                red: !lambda 'return red/255;'
+                green: !lambda 'return green/255;'
+                blue: !lambda 'return blue/255;'
+
+      # bit 3 = led_bay_2
+      - if:
+          condition:
+            lambda: 'return partition_bits & 8;'
+          then:
+            - light.turn_on:
+                id: led_bay_2
+                brightness: !lambda 'return brightness/100;'
+                red: !lambda 'return red/255;'
+                green: !lambda 'return green/255;'
+                blue: !lambda 'return blue/255;'
+
+      # bit 4 = led_roof_1
+      - if:
+          condition:
+            lambda: 'return partition_bits & 16;'
+          then:
+            - light.turn_on:
+                id: led_roof_1
+                brightness: !lambda 'return brightness/100;'
+                red: !lambda 'return red/255;'
+                green: !lambda 'return green/255;'
+                blue: !lambda 'return blue/255;'
+
+      # bit 5 = led_roof_2
+      - if:
+          condition:
+            lambda: 'return partition_bits & 32;'
+          then:
+            - light.turn_on:
+                id: led_roof_2
+                brightness: !lambda 'return brightness/100;'
+                red: !lambda 'return red/255;'
+                green: !lambda 'return green/255;'
+                blue: !lambda 'return blue/255;'
 

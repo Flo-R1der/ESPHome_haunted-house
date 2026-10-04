@@ -52,6 +52,31 @@ api:
       then:
         - dfplayer.set_volume:
             volume: !lambda "return value;"
+    # Control light partitions of WS2812B RGB LED Strip using bitmask
+    # 0 = all off
+    # bit 0 = led_door
+    # bit 1 = led_bay_1
+    # bit 2 = led_small_window
+    # bit 3 = led_bay_2
+    # bit 4 = led_roof_1
+    # bit 5 = led_roof_2
+    # brightness in %
+    # red&green/blue in 0-255
+    - action: partition_light
+      variables:
+        partition_bits: int
+        brightness: float
+        red: float
+        green: float
+        blue: float
+      then:
+        - script.execute:
+            id: partition_light
+            partition_bits: !lambda "return partition_bits;"
+            brightness: !lambda "return brightness;"
+            red: !lambda "return red;"
+            green: !lambda "return green;"
+            blue: !lambda "return blue;"
 
 ota:
   - platform: esphome
