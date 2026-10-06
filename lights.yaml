@@ -13,12 +13,12 @@ output:
     frequency: 1000Hz
 
   - platform: ledc
-    pin: GPIO19
+    pin: GPIO18
     id: power_led_3_output
     frequency: 1000Hz
 
   - platform: ledc
-    pin: GPIO18
+    pin: GPIO19
     id: power_led_4_output
     frequency: 1000Hz
 
@@ -166,7 +166,7 @@ light:
         to: 18
     effects:
       - addressable_lambda:
-          name: color_wandering
+          name: Color Wandering
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -203,7 +203,7 @@ light:
         to: 36
     effects:
       - addressable_lambda:
-          name: color_wandering
+          name: Color Wandering
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -240,7 +240,7 @@ light:
         to: 53
     effects:
       - addressable_lambda:
-          name: color_wandering
+          name: Color Wandering
           update_interval: 50ms
           lambda: |-
             esphome::wandering_light_fx::color_wandering(
@@ -305,7 +305,7 @@ wandering_light:   # is required to activate the external component
 
 globals:
   - id: color_wandering_length
-    type: uint32_t
+    type: int
     restore_value: no
     initial_value: '5000'
 
@@ -334,7 +334,6 @@ select:
           condition:
             lambda: 'return i == 1;'
           then:
-
             - light.turn_on:
                 id: power_led_1
                 effect: flicker
@@ -362,23 +361,23 @@ select:
             - light.turn_on:
                 id: power_led_1
                 effect: flash
-            - delay: 100ms
+            - delay: 500ms
             - light.turn_on:
                 id: power_led_2
                 effect: flash
-            - delay: 100ms
+            - delay: 500ms
             - light.turn_on:
                 id: power_led_3
                 effect: flash
-            - delay: 100ms
+            - delay: 500ms
             - light.turn_on:
                 id: power_led_4
                 effect: flash
-            - delay: 100ms
+            - delay: 500ms
             - light.turn_on:
                 id: power_led_5
                 effect: flash
-            - delay: 100ms
+            - delay: 500ms
             - select.first: power_led_effect
 
 
@@ -386,9 +385,9 @@ script:
   - id: partition_light
     parameters:
       partition_bits: int
-      brightness: float
-      red: float
-      green: float
+      brightness: float   # 0-100
+      red: float          # 0-255
+      green: float        # 0-255
       blue: float
     then:
       # 0 = all off
