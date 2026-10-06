@@ -75,6 +75,32 @@ api:
             red: !lambda "return red;"
             green: !lambda "return green;"
             blue: !lambda "return blue;"
+    # Call the scene_controller script as a sensor trigger would do
+    - action: random_scene
+      variables:
+        scene_type: int
+        # 0 = no scene
+        # 1 = music only
+        # 2 = approach (includes music)
+        # 3 = action
+        # 4 = departure
+      then:
+        - script.execute:
+            id: scene_controller
+            scene_type: !lambda "return scene_type;"
+    # request a specific scene to be started
+    - action: start_scene
+      variables:
+        scene_number: int
+      then:
+        - script.execute:
+            id: scene_start_manual
+            scene_number: !lambda "return scene_number;"
+    # stop running scenes
+    - action: stop_scene
+      then:
+        - script.execute: stop_scene
+
 
 ota:
   - platform: esphome
@@ -149,6 +175,7 @@ button:
 
 packages:
   - !include lights.yaml
+  - !include scenes/00_scene_controller.yaml
 
 
 globals:

@@ -1,0 +1,94 @@
+# 
+
+packages:
+  - !include 01_music.yaml
+  - !include 02_approach.yaml
+  - !include 03_action.yaml
+  - !include 04_departure.yaml
+
+
+script:
+  - id: scene_controller
+    mode: restart
+    parameters:
+      scene_type: int
+      # 0 = no scene
+      # 1 = music only
+      # 2 = approach (includes music)
+      # 3 = action
+      # 4 = departure
+    then:
+      - script.execute: stop_scene
+      - script.wait: stop_scene
+      
+      - lambda: |-
+          ESP_LOGI("scene_controller", "received scene type: %d", scene_type);
+          int scene = scene_type;
+          if (scene_type == 2) {
+            // Randomly select MUSIC or APPROACH
+            scene = 1 + (esphome::random_uint32() % 2);
+            ESP_LOGI("scene_controller", "randomly selected scene type: %d", scene_type);
+          }
+          // Set the global variable to the selected scene type
+          id(scene_type_running) = scene;
+
+
+  - id: scene_start_manual   # for the api/service action
+    mode: single
+    parameters:
+      scene_number: int
+    then:
+      - script.execute: stop_scene
+      - if:
+          condition:
+            - lambda: 'return scene_number != 0;'
+          then:
+            - script.wait: stop_scene
+            - script.execute: 
+                id: scenes_music
+                requested_scene: !lambda "return scene_number;"
+            - script.execute: 
+                id: scenes_approach
+                requested_scene: !lambda "return scene_number;"
+            - script.execute: 
+                id: scenes_action
+                requested_scene: !lambda "return scene_number;"
+            - script.execute: 
+                id: scenes_departure
+                requested_scene: !lambda "return scene_number;"
+      
+
+  - id: stop_scene
+    mode: restart
+    then:
+        # stop scripts
+        - script.stop: scenes_music
+        - script.stop: scenes_approach
+        - script.stop: scenes_action
+        - script.stop: scenes_departure
+        - script.stop: partition_light
+        # stop audio
+        - dfplayer.stop
+        # turn off lights
+        - light.turn_off: power_led_1
+        - light.turn_off: power_led_2
+        - light.turn_off: power_led_3
+        - light.turn_off: power_led_4
+        - light.turn_off: power_led_5
+        - light.turn_off: led_basement
+        - light.turn_off: led_door
+        - light.turn_off: led_bay_1
+        - light.turn_off: led_livingroom
+        - light.turn_off: led_small_window
+        - light.turn_off: led_bay_2
+        - light.turn_off: led_attic
+        - light.turn_off: led_roof_1
+        - light.turn_off: led_roof_2
+        # reset global variables
+        - globals.set:
+            id: scene_type_running
+            value: '0'
+        - globals.set:
+            id: scene_running
+            value: '0'
+
