@@ -151,6 +151,31 @@ packages:
   - !include lights.yaml
 
 
+globals:
+  - id: scene_type_running
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # 0 = no scene
+    # 1 = scene type "music" running
+    # 2 = scene type "approach" running
+    # 3 = scene type "action" running
+    # 4 = scene type "departure" running
+
+  - id: scene_running
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # 0 = no scene selected
+    # n = 
+
+  - id: last_volume
+    type: int
+    restore_value: no
+    initial_value: '0'
+
+
+
 ld2410:
   uart_id: uart_ld2410
 
@@ -169,7 +194,7 @@ binary_sensor:
       name: "Anwesenheit"
       filters:
         - delayed_on: 200ms
-        - delayed_off: 2s
+        - delayed_off: 30s
 
 sensor:
   - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
@@ -194,7 +219,8 @@ sensor:
       name: "Bewegungserkennung Abstand"
       id: ld2410_distance
       filters:
-        - throttle: 30s
+        - throttle: 15s
+        - timeout: 30s
 
   - platform: bh1750
     name: "Umgebungshelligkeit"
