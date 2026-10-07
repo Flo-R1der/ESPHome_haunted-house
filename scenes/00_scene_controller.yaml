@@ -120,4 +120,7 @@ script:
         - globals.set:
             id: scene_running
             value: '0'
+        - number.set:
+            id: volume
+            value: !lambda 'return id(last_volume);'
 

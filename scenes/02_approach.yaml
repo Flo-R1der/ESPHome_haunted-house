@@ -41,7 +41,38 @@ script:
       - script.execute: 
           id: stop_scene
           stop_waiting_seconds: 5   # duration of the scene
+      - globals.set:
+          id: last_volume
+          value: !lambda 'return id(volume).state;'
+      - number.set:
+          id: volume
+          value: 100
       - dfplayer.play_folder:
           folder: 02
           file: 02
+      - wait_until:
+          condition:
+              switch.is_on: stop_request
+          timeout: 1s
+      - script.execute:
+          id: partition_light
+          partition_bits: 8
+          brightness: 70
+          red: 220
+          green: 0
+          blue: 255
+      - script.execute:
+          id: partition_light
+          partition_bits: 32
+          brightness: 60
+          red: 210
+          green: 0
+          blue: 255
+      - light.turn_on:
+          id: power_led_4
+          effect: flicker
+          brightness: 35%
+      - number.set:
+          id: volume
+          value: !lambda 'return id(last_volume);'
 
