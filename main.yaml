@@ -98,8 +98,12 @@ api:
             scene_number: !lambda "return scene_number;"
     # stop running scenes
     - action: stop_scene
+      variables:
+        stop_waiting_seconds: int
       then:
-        - script.execute: stop_scene
+        - script.execute:
+            id: stop_scene
+            stop_waiting_seconds: !lambda "return stop_waiting_seconds;"
 
 
 ota:
@@ -200,6 +204,18 @@ globals:
     type: int
     restore_value: no
     initial_value: '0'
+
+
+switch:
+  - platform: template
+    name: "Stop Scene"
+    id: stop_request
+    optimistic: true
+    icon: mdi:pause-box
+    turn_on_action:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 0
 
 
 

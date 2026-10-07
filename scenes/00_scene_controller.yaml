@@ -18,7 +18,9 @@ script:
       # 3 = action
       # 4 = departure
     then:
-      - script.execute: stop_scene
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 0
       - script.wait: stop_scene
       
       - lambda: |-
@@ -38,7 +40,9 @@ script:
     parameters:
       scene_number: int
     then:
-      - script.execute: stop_scene
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 0
       - if:
           condition:
             - lambda: 'return scene_number != 0;'
@@ -60,7 +64,32 @@ script:
 
   - id: stop_scene
     mode: restart
+    parameters:
+      stop_waiting_seconds: int
     then:
+        - if:
+            condition:
+                lambda: 'return stop_waiting_seconds > 0;'
+            then:
+                - logger.log:
+                    format: "start counting %ds before stopping"
+                    args: [ 'stop_waiting_seconds' ]
+                    level: INFO
+                    tag: scene_timeout
+                - wait_until:
+                    condition:
+                        switch.is_on: stop_request
+                    timeout: !lambda "return (stop_waiting_seconds*1000);"
+                - logger.log:
+                    format: "STOPPING scene!"
+                    level: INFO
+                    tag: scene_timeout
+                - delay: 100ms   # wait for other scenes to end
+            else:
+                - logger.log:
+                    format: "0s timeout given, STOPPING scene immediately!"
+                    level: WARN
+                    tag: scene_timeout
         # stop scripts
         - script.stop: scenes_music
         - script.stop: scenes_approach

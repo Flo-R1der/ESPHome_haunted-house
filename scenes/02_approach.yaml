@@ -38,7 +38,9 @@ script:
   - id: _02_ghost_laugh
     mode: single 
     then:
-      - script.execute: stop_scene
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 5   # duration of the scene
       - dfplayer.play_folder:
           folder: 02
           file: 02

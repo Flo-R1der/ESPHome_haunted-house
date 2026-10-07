@@ -41,7 +41,9 @@ script:
   - id: _10_horror_orchestra
     mode: single 
     then:
-      - script.execute: stop_scene
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 77   # duration of the scene
       - dfplayer.play_folder:
           folder: 01
           file: 10     # track / scene number

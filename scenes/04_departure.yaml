@@ -39,7 +39,9 @@ script:
   - id: _01_witch_laugh
     mode: single 
     then:
-      - script.execute: stop_scene
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 6   # duration of the scene
       - dfplayer.play_folder:
           folder: 04
           file: 01

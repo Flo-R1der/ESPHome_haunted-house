@@ -42,7 +42,9 @@ script:
   - id: _05_cemetery_wind
     mode: single 
     then:
-      - script.execute: stop_scene
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 13   # duration of the scene
       - dfplayer.play_folder:
           folder: 03
           file: 05
