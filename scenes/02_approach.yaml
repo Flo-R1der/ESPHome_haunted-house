@@ -41,12 +41,9 @@ script:
       - script.execute: 
           id: stop_scene
           stop_waiting_seconds: 5   # duration of the scene
-      - globals.set:
-          id: last_volume
-          value: !lambda 'return id(volume).state;'
       - number.set:
           id: volume
-          value: 100
+          value: 100   # will be reset by the stop script
       - dfplayer.play_folder:
           folder: 02
           file: 02
@@ -72,7 +69,4 @@ script:
           id: power_led_4
           effect: flicker
           brightness: 35%
-      - number.set:
-          id: volume
-          value: !lambda 'return id(last_volume);'
 
