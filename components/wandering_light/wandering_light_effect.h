@@ -10,10 +10,13 @@ inline void color_wandering(
     light::LightState *state,
     Color current_color,
     bool initial_run,
-    uint32_t effect_length) {
+    int effect_length = 5000,
+    bool reverse = false,
+    float radius = 4.0f) {
 
     static uint32_t start_time = 0;
 
+    // init
     if (initial_run) {
         start_time = millis();
         light->all() = Color::BLACK;
@@ -41,22 +44,31 @@ inline void color_wandering(
         return;
     }
 
+    // Protect against invalid radius values
+    if (radius < 0.0f) {
+        radius = 0.0f;
+    }
+
     // Progress from 0.0 to 1.0
     const float progress =
         (float) elapsed / (float) effect_length;
 
+    const float start_position =
+        reverse
+            ? (float) (size - 1) + radius
+            : -radius;
+
+    const float end_position =
+        reverse
+            ? -radius
+            : (float) (size - 1) + radius;
+
+    const float travel_distance =
+        end_position - start_position;
+
     // Current position of the light center
     const float position =
-        progress * (float) (size - 1);
-
-    // Radius of the light glow in LEDs.
-    // At radius 4:
-    // center = 100%
-    // 1 LED away = 75%
-    // 2 LEDs away = 50%
-    // 3 LEDs away = 25%
-    // 4 LEDs away = 0%
-    const float radius = 4.0f;
+        start_position + progress * travel_distance;
 
     for (int i = 0; i < size; i++) {
 

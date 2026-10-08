@@ -123,4 +123,7 @@ script:
         - number.set:
             id: volume
             value: !lambda 'return id(last_volume);'
+        - globals.set:
+            id: color_wandering_reversed
+            value: 'false'
 

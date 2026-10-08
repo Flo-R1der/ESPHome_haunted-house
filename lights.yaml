@@ -38,7 +38,7 @@ light:
       - flicker:
           name: "flicker"
           alpha: 95%
-          intensity: 4%
+          intensity: 5%
       - lambda:
           name: "flash"
           update_interval: 50ms   # equal to flash length
@@ -63,7 +63,7 @@ light:
       - flicker:
           name: "flicker"
           alpha: 95%
-          intensity: 4%
+          intensity: 5%
       - lambda:
           name: "flash"
           update_interval: 50ms   # equal to flash length
@@ -88,7 +88,7 @@ light:
       - flicker:
           name: "flicker"
           alpha: 95%
-          intensity: 4%
+          intensity: 5%
       - lambda:
           name: "flash"
           update_interval: 50ms   # equal to flash length
@@ -113,7 +113,7 @@ light:
       - flicker:
           name: "flicker"
           alpha: 95%
-          intensity: 4%
+          intensity: 5%
       - lambda:
           name: "flash"
           update_interval: 50ms   # equal to flash length
@@ -138,7 +138,7 @@ light:
       - flicker:
           name: "flicker"
           alpha: 95%
-          intensity: 4%
+          intensity: 5%
       - lambda:
           name: "flash"
           update_interval: 50ms   # equal to flash length
@@ -156,7 +156,7 @@ light:
 
 
   # WS2812B RGB LED Strip
-  # Erdgeschoss: LED 01-19
+  # led_basement: LED 01-19
   - platform: partition
     id: led_basement
     internal: true
@@ -164,6 +164,7 @@ light:
       - id: rgb_led_strip
         from: 0
         to: 18
+    default_transition_length: 1s
     effects:
       - addressable_lambda:
           name: Color Wandering
@@ -174,26 +175,29 @@ light:
             id(led_basement),
             current_color,
             initial_run,
-            id(color_wandering_length)
+            id(color_wandering_length_ms),
+            id(color_wandering_reversed)
             );
-  # Tür: LED 01-09
+  # led_door: LED 01-09
   - platform: partition
     id: led_door
     internal: true
+    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 0
         to: 8
-  # Erker 1: LED 12-19
+  # led_bay_1: LED 12-19
   - platform: partition
     id: led_bay_1
     internal: true
+    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 11
         to: 18
 
-  # Wohnräume: LED 20-37
+  # led_livingroom: LED 20-37
   - platform: partition
     id: led_livingroom
     internal: true
@@ -201,6 +205,8 @@ light:
       - id: rgb_led_strip
         from: 19
         to: 36
+        reversed: true
+    default_transition_length: 1s
     effects:
       - addressable_lambda:
           name: Color Wandering
@@ -211,26 +217,29 @@ light:
             id(led_livingroom),
             current_color,
             initial_run,
-            id(color_wandering_length)
+            id(color_wandering_length_ms),
+            id(color_wandering_reversed)
             );
-  # Mini-Fenster: LED 20-23
+  # led_small_window: LED 20-23
   - platform: partition
     id: led_small_window
     internal: true
+    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 19
         to: 22
-  # Erker 2: LED 26-37
+  # led_bay_2: LED 26-37
   - platform: partition
     id: led_bay_2
     internal: true
+    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 25
         to: 36
 
-  # Dachgeschoss: LED 38-54
+  # led_attic: LED 38-54
   - platform: partition
     id: led_attic
     internal: true
@@ -238,6 +247,7 @@ light:
       - id: rgb_led_strip
         from: 37
         to: 53
+    default_transition_length: 1s
     effects:
       - addressable_lambda:
           name: Color Wandering
@@ -248,20 +258,23 @@ light:
             id(led_attic),
             current_color,
             initial_run,
-            id(color_wandering_length)
+            id(color_wandering_length_ms),
+            id(color_wandering_reversed)
             );
-  # Dachfenster 1: LED 38-44
+  # led_roof_1: LED 38-44
   - platform: partition
     id: led_roof_1
     internal: true
+    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 37
         to: 43
-  # Dachfenster 2: LED 48-54
+  # led_roof_2: LED 48-54
   - platform: partition
     id: led_roof_2
     internal: true
+    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 47
@@ -281,7 +294,7 @@ light:
       - flicker:
           name: "Flicker"
           alpha: 95%
-          intensity: 4%
+          intensity: 5%
       - addressable_lambda:
           name: "Color Wandering"
           update_interval: 50ms
@@ -304,10 +317,14 @@ external_components:
 wandering_light:   # is required to activate the external component
 
 globals:
-  - id: color_wandering_length
+  - id: color_wandering_length_ms
     type: int
     restore_value: no
     initial_value: '5000'
+  - id: color_wandering_reversed
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 
 select:
@@ -383,12 +400,13 @@ select:
 
 script:
   - id: partition_light
+    mode: queued
     parameters:
       partition_bits: int
       brightness: float   # 0-100
       red: float          # 0-255
       green: float        # 0-255
-      blue: float
+      blue: float         # 0-255
     then:
       # 0 = all off
       - if:
@@ -407,6 +425,7 @@ script:
                 id: led_roof_1
             - light.turn_off:
                 id: led_roof_2
+            - script.stop: partition_light
 
       # bit 0 = led_door
       - if:
@@ -419,6 +438,7 @@ script:
                 red: !lambda 'return red/255;'
                 green: !lambda 'return green/255;'
                 blue: !lambda 'return blue/255;'
+                effect: 'none'
 
       # bit 1 = led_bay_1
       - if:
@@ -431,6 +451,7 @@ script:
                 red: !lambda 'return red/255;'
                 green: !lambda 'return green/255;'
                 blue: !lambda 'return blue/255;'
+                effect: 'none'
 
       # bit 2 = led_small_window
       - if:
@@ -443,6 +464,7 @@ script:
                 red: !lambda 'return red/255;'
                 green: !lambda 'return green/255;'
                 blue: !lambda 'return blue/255;'
+                effect: 'none'
 
       # bit 3 = led_bay_2
       - if:
@@ -455,6 +477,7 @@ script:
                 red: !lambda 'return red/255;'
                 green: !lambda 'return green/255;'
                 blue: !lambda 'return blue/255;'
+                effect: 'none'
 
       # bit 4 = led_roof_1
       - if:
@@ -467,6 +490,7 @@ script:
                 red: !lambda 'return red/255;'
                 green: !lambda 'return green/255;'
                 blue: !lambda 'return blue/255;'
+                effect: 'none'
 
       # bit 5 = led_roof_2
       - if:
@@ -479,4 +503,5 @@ script:
                 red: !lambda 'return red/255;'
                 green: !lambda 'return green/255;'
                 blue: !lambda 'return blue/255;'
+                effect: 'none'
 
