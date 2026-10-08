@@ -13,9 +13,6 @@ esphome:
       then:
         - dfplayer.set_volume:
             volume: !lambda "return (int) round(id(volume).state * 30.0 / 100.0);"
-        - globals.set:
-            id: last_volume
-            value: !lambda 'return id(volume).state;'
 
 esp32:
   board: wemos_d1_mini32
@@ -48,13 +45,6 @@ api:
         - dfplayer.play_folder:
             folder: !lambda "return folder;"
             file: !lambda "return file;"
-    # Set DFPlayer volume directly (0-30)
-    - action: set_volume
-      variables:
-        value: int
-      then:
-        - dfplayer.set_volume:
-            volume: !lambda "return value;"
     # Control light partitions of WS2812B RGB LED Strip using bitmask
     - action: partition_light
       variables:
@@ -206,7 +196,7 @@ globals:
 
   - id: last_volume
     type: int
-    restore_value: no
+    restore_value: yes
     initial_value: '0'
 
 

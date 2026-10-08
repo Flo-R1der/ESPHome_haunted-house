@@ -18,6 +18,12 @@ script:
       # 3 = action
       # 4 = departure
     then:
+      - globals.set:
+          id: last_volume
+          value: !lambda 'return id(volume).state;'
+      - delay: 20ms
+        # wait for the availability of the new value on the global variable
+        # then trigger the right script
       - script.execute: 
           id: stop_scene
           stop_waiting_seconds: 0
@@ -40,9 +46,16 @@ script:
     parameters:
       scene_number: int
     then:
+      - globals.set:
+          id: last_volume
+          value: !lambda 'return id(volume).state;'
+      - delay: 20ms
+        # wait for the availability of the new value on the global variable
+        # then trigger the right script
       - script.execute: 
           id: stop_scene
           stop_waiting_seconds: 0
+      - script.wait: stop_scene
       - if:
           condition:
             - lambda: 'return scene_number != 0;'
