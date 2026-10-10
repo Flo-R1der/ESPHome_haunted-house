@@ -28,7 +28,7 @@ script:
           if (selected_scene == 10) { id(_10_horror_orchestra).execute();
           } else if (selected_scene == 12) { id(_12_music_box).execute();
           } else if (selected_scene == 37) { id(_37_music_box).execute();
-          // } else if (selected_scene == 50) { id(_50_creaking_door).execute();
+          } else if (selected_scene == 50) { id(_50_thriller).execute();
           // } else if (selected_scene == 51) { id(_51_wind_howl).execute();
           // } else if (selected_scene == 52) { id(_52_thunder_clap).execute();
           // } else if (selected_scene == 53) { id(_53_ghostly_laughter).execute();
@@ -44,6 +44,7 @@ script:
       - script.stop: _10_horror_orchestra
       - script.stop: _12_music_box
       - script.stop: _37_music_box
+      - script.stop: _50_thriller
 
 
   - id: _10_horror_orchestra
@@ -226,4 +227,104 @@ script:
           effect: flicker
           brightness: 20%
 
+  - id: _50_thriller
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 114   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 01
+          file: 50     # track / scene number
+      - delay: 2s
+      - light.turn_on:
+          id: led_livingroom
+          transition_length: 6s
+          brightness: 100%
+          red: 95%
+          green: 0%
+          blue: 100%
+      - delay: 9.5s
+      - light.turn_on:
+          id: power_led_4
+          effect: flicker
+          brightness: 30%
+      - delay: 5.5s
+      - light.turn_on:
+          id: led_attic
+          transition_length: 2s
+          brightness: 100%
+          red: 95%
+          green: 0%
+          blue: 100%
+      - delay: 6.5s
+      - light.turn_on:
+          id: power_led_5
+          effect: flicker
+          brightness: 20%
+      - delay: 14.3s   # intro end
+      - lambda: |-
+          auto call = id(power_led_4).turn_off();
+          call.set_transition_length(0).perform();
+          call = id(power_led_5).turn_off();
+          call.set_transition_length(0).perform();
+      - light.turn_on:
+          id: led_livingroom
+          transition_length: 0s
+          brightness: 90%
+          red: 100%
+          green: 90%
+          blue: 100%
+      - light.turn_on:
+          id: led_attic
+          transition_length: 0s
+          brightness: 90%
+          red: 100%
+          green: 80%
+          blue: 100%
+      - lambda: |-
+          auto call = id(power_led_1).turn_on().set_brightness(0.7);
+          call.set_effect("none").set_transition_length(100).perform();
+          call = id(power_led_2).turn_on().set_brightness(0.7);
+          call.set_effect("none").set_transition_length(100).perform();
+          call = id(power_led_3).turn_on().set_brightness(0.7);
+          call.set_effect("none").set_transition_length(100).perform();
+          call = id(power_led_4).turn_on().set_brightness(0.7);
+          call.set_effect("none").set_transition_length(100).perform();
+          call = id(power_led_5).turn_on().set_brightness(0.7);
+          call.set_effect("none").set_transition_length(100).perform();
+      - delay: 2.5s
+      - lambda: |-
+          auto call = id(power_led_1).turn_off();
+          call.set_transition_length(4000).perform();
+          call = id(power_led_2).turn_off();
+          call.set_transition_length(4000).perform();
+          call = id(power_led_3).turn_off();
+          call.set_transition_length(4000).perform();
+          call = id(power_led_4).turn_off();
+          call.set_transition_length(4000).perform();
+          call = id(power_led_5).turn_off();
+          call.set_transition_length(4000).perform();
+      - delay: 1.5s
+      - light.turn_on:
+          id: led_basement
+          brightness: 90%
+          effect: Rainbow
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 90%
+          effect: Rainbow
+      - light.turn_on:
+          id: led_attic
+          brightness: 100%
+          effect: Disco
+      - delay: 3.6s
+      - script.execute:
+          id: thunder
+          pause_array: [2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030]
+          power_led_no: 3
+      - script.execute:
+          id: thunder
+          pause_array: [2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030]
+          power_led_no: 4
 

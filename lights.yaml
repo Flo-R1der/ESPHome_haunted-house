@@ -178,6 +178,14 @@ light:
             id(color_wandering_length_ms),
             id(color_wandering_reversed)
             );
+      - addressable_rainbow:
+          name: Rainbow
+          speed: 15
+          width: 30
+      - addressable_random_twinkle:
+          name: Disco
+          twinkle_probability: 15%
+          progress_interval: 12ms
   # led_door: LED 01-09
   - platform: partition
     id: led_door
@@ -220,6 +228,14 @@ light:
             id(color_wandering_length_ms),
             id(color_wandering_reversed)
             );
+      - addressable_rainbow:
+          name: Rainbow
+          speed: 15
+          width: 30
+      - addressable_random_twinkle:
+          name: Disco
+          twinkle_probability: 15%
+          progress_interval: 12ms
   # led_small_window: LED 20-23
   - platform: partition
     id: led_small_window
@@ -261,6 +277,14 @@ light:
             id(color_wandering_length_ms),
             id(color_wandering_reversed)
             );
+      - addressable_rainbow:
+          name: Rainbow
+          speed: 15
+          width: 30
+      - addressable_random_twinkle:
+          name: Disco
+          twinkle_probability: 15%
+          progress_interval: 12ms
   # led_roof_1: LED 38-44
   - platform: partition
     id: led_roof_1
