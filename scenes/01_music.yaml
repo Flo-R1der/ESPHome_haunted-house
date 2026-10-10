@@ -9,6 +9,7 @@ script:
       # 0 = random selection
       # 1-n = activate specific scene
     then:
+      - lambda: 'id(scene_type_running) = 1;'
       - lambda: |-
           ESP_LOGV("scenes_music", "received scene request: %d", requested_scene);
           int selected_scene = requested_scene;
@@ -36,6 +37,13 @@ script:
             ESP_LOGW("scenes_music", "this script don't know a scene No: %d", selected_scene);
           }
 
+
+  - id: stop_music_scene
+    mode: single
+    then:
+      - script.stop: _10_horror_orchestra
+      - script.stop: _12_music_box
+      - script.stop: _37_music_box
 
 
   - id: _10_horror_orchestra

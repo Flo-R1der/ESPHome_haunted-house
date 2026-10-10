@@ -9,6 +9,7 @@ script:
       # 0 = random selection
       # 1-n = activate specific scene
     then:
+      - lambda: 'id(scene_type_running) = 2;'
       - lambda: |-
           ESP_LOGV("scenes_approach", "received scene request: %d", requested_scene);
           int selected_scene = requested_scene;
@@ -35,6 +36,12 @@ script:
           }
 
 
+  - id: stop_approach_scene
+    mode: single
+    then:
+      - script.stop: _02_ghost_laugh
+
+
   - id: _02_ghost_laugh
     mode: single 
     then:
@@ -47,10 +54,7 @@ script:
       - dfplayer.play_folder:
           folder: 02
           file: 02
-      - wait_until:
-          condition:
-              switch.is_on: stop_request
-          timeout: 1s
+      - delay: 1s
       - script.execute:
           id: partition_light
           partition_bits: 8

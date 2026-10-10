@@ -97,18 +97,17 @@ script:
                     format: "STOPPING scene!"
                     level: INFO
                     tag: scene_timeout
-                - delay: 100ms   # wait for other scenes to end
             else:
                 - logger.log:
                     format: "0s timeout given, STOPPING scene immediately!"
                     level: WARN
                     tag: scene_timeout
         # stop scripts
-        - script.stop: scenes_music
-        - script.stop: scenes_approach
-        - script.stop: scenes_action
-        - script.stop: scenes_departure
-        - script.stop: partition_light
+        - script.execute: stop_music_scene
+        - script.execute: stop_approach_scene
+        - script.execute: stop_action_scene
+        - script.execute: stop_departure_scene
+        - script.stop: thunder
         # stop audio
         - dfplayer.stop
         # turn off lights

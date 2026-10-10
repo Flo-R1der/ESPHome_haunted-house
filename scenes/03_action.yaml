@@ -9,6 +9,7 @@ script:
       # 0 = random selection
       # 1-n = activate specific scene
     then:
+      - lambda: 'id(scene_type_running) = 3;'
       - lambda: |-
           ESP_LOGV("scenes_action", "received scene request: %d", requested_scene);
           int selected_scene = requested_scene;
@@ -37,6 +38,12 @@ script:
           } else {   // ^-- updates on add/remove of scenes --^ //
             ESP_LOGW("scenes_action", "this script don't know a scene No: %d", selected_scene);
           }
+
+
+  - id: stop_action_scene
+    mode: single
+    then:
+      - script.stop: _05_cemetery_wind
 
 
   - id: _05_cemetery_wind
