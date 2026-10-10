@@ -26,7 +26,7 @@ script:
           int selected_scene = id(scene_running);
           if (selected_scene == 10) { id(_10_horror_orchestra).execute();
           } else if (selected_scene == 12) { id(_12_music_box).execute();
-          // } else if (selected_scene == 37) { id(_37_eerie_piano).execute();
+          } else if (selected_scene == 37) { id(_37_music_box).execute();
           // } else if (selected_scene == 50) { id(_50_creaking_door).execute();
           // } else if (selected_scene == 51) { id(_51_wind_howl).execute();
           // } else if (selected_scene == 52) { id(_52_thunder_clap).execute();
@@ -140,5 +140,82 @@ script:
       - light.turn_off:
           id: led_basement
           transition_length: 1s
+
+  - id: _37_music_box
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 32   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 01
+          file: 37     # track / scene number
+      - globals.set:
+          id: color_wandering_length_ms
+          value: '7500'
+      - globals.set:
+          id: color_wandering_reversed
+          value: 'true'
+      - delay: 20ms   # wait for the global variable to be available
+      - light.turn_on:
+          id: led_basement
+          brightness: 100%
+          red: 95%
+          green: 0%
+          blue: 100%
+      - light.turn_on:
+          id: led_basement
+          effect: "Color Wandering"
+      - delay: 7s
+      - light.turn_off:
+          id: led_basement
+          transition_length: 1s
+      - globals.set:
+          id: color_wandering_reversed
+          value: 'true'
+      - delay: 20ms   # wait for the global variable to be available
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 100%
+          red: 95%
+          green: 0%
+          blue: 100%
+      - light.turn_on:
+          id: led_livingroom
+          effect: "Color Wandering"
+      - globals.set:
+          id: color_wandering_reversed
+          value: 'false'
+      - delay: 7s
+      - light.turn_off:
+          id: led_livingroom
+          transition_length: 1s
+      - light.turn_on:
+          id: led_attic
+          brightness: 100%
+          red: 100%
+          green: 0%
+          blue: 0%
+      - light.turn_on:
+          id: led_attic
+          effect: "Color Wandering"
+      - delay: 7.5s
+      - light.turn_off:
+          id: led_attic
+          transition_length: 0s
+      - script.execute:
+          id: thunder
+          pause_array: [200, 500]
+          power_led_no: 3
+      - delay: 300ms
+      - script.execute:
+          id: thunder
+          pause_array: [200]
+          power_led_no: 5
+      - delay: 2s
+      - light.turn_on:
+          id: power_led_2
+          effect: flicker
+          brightness: 20%
 
 

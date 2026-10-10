@@ -399,6 +399,47 @@ select:
 
 
 script:
+  - id: thunder
+    mode: parallel
+    parameters:
+      pause_array: int[]
+      power_led_no: int
+
+    then:
+      - repeat:
+          count: !lambda 'return pause_array.size();'
+          then:
+            - lambda: |-
+                if (power_led_no == 1) {
+                  id(power_led_1).turn_on().set_effect("flash").perform();
+                } else if (power_led_no == 2) {
+                  id(power_led_2).turn_on().set_effect("flash").perform();
+                } else if (power_led_no == 3) {
+                  id(power_led_3).turn_on().set_effect("flash").perform();
+                } else if (power_led_no == 4) {
+                  id(power_led_4).turn_on().set_effect("flash").perform();
+                } else if (power_led_no == 5) {
+                  id(power_led_5).turn_on().set_effect("flash").perform();
+                } else {
+                  ESP_LOGW("thunder", "Unknown LED No: %d", power_led_no);
+                }
+            - delay: !lambda |-
+                return pause_array[iteration];
+      - lambda: |-
+          if (power_led_no == 1) {
+            id(power_led_1).turn_on().set_effect("flash").perform();
+          } else if (power_led_no == 2) {
+            id(power_led_2).turn_on().set_effect("flash").perform();
+          } else if (power_led_no == 3) {
+            id(power_led_3).turn_on().set_effect("flash").perform();
+          } else if (power_led_no == 4) {
+            id(power_led_4).turn_on().set_effect("flash").perform();
+          } else if (power_led_no == 5) {
+            id(power_led_5).turn_on().set_effect("flash").perform();
+          } else {
+            ESP_LOGW("thunder", "Unknown LED No: %d", power_led_no);
+          }
+
   - id: partition_light
     mode: queued
     parameters:
