@@ -27,7 +27,7 @@ script:
           int selected_scene = id(scene_running);
           if (selected_scene == 2) { id(_02_ghost_laugh).execute();
           } else if (selected_scene == 6) { id(_06_harsh_wind).execute();
-          // } else if (selected_scene == 7) { id(_07_eerie_piano).execute();
+          } else if (selected_scene == 7) { id(_07_clock_ticking).execute();
           // } else if (selected_scene == 9) { id(_09_creaking_door).execute();
           // } else if (selected_scene == 19) { id(_19_wind_howl).execute();
           // } else if (selected_scene == 24) { id(_24_thunder_clap).execute();
@@ -41,6 +41,7 @@ script:
     then:
       - script.stop: _02_ghost_laugh
       - script.stop: _06_harsh_wind
+      - script.stop: _07_clock_ticking
 
 
   - id: _02_ghost_laugh
@@ -114,4 +115,60 @@ script:
           blue: 100%
       - light.turn_off:
           id: power_led_2
+
+  - id: _07_clock_ticking
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 16.5   # duration of the scene
+      - repeat:
+          count: 4
+          then:
+            - dfplayer.play_folder:
+                folder: 02
+                file: 07
+            - light.turn_on:
+                id: power_led_1
+                effect: flicker
+                brightness: 20%
+            - light.turn_on:
+                id: power_led_4
+                effect: flicker
+                brightness: 20%
+            - delay: 50ms
+            - light.turn_on:   # tick 1+5
+                id: power_led_5
+                brightness: 50%
+                effect: flash
+            - delay: 1s
+            - light.turn_on:   # tick 2+6
+                id: led_attic_1
+                brightness: 70%
+                transition_length: 100ms
+                red: 90%
+                green: 0%
+                blue: 100%
+            - delay: 100ms
+            - light.turn_off:
+                id: led_attic_1
+                transition_length: 400ms
+            - delay: 900ms
+            - light.turn_on:   # tick 3+7
+                id: power_led_3
+                brightness: 50%
+                effect: flash
+            - delay: 1s
+            - light.turn_on:    # tick 4+8
+                id: led_bay_2
+                brightness: 70%
+                transition_length: 100ms
+                red: 90%
+                green: 0%
+                blue: 100%
+            - delay: 100ms
+            - light.turn_off:
+                id: led_bay_2
+                transition_length: 400ms
+            - delay: 900ms
 

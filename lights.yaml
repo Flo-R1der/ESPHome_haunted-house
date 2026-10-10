@@ -46,7 +46,6 @@ light:
             if (initial_run) {
                 auto call = it.turn_on();
                 call.set_transition_length(0);
-                call.set_brightness(1.0);
                 call.perform();
             } else {
                 auto call = it.turn_off();
@@ -71,7 +70,6 @@ light:
             if (initial_run) {
                 auto call = it.turn_on();
                 call.set_transition_length(0);
-                call.set_brightness(1.0);
                 call.perform();
             } else {
                 auto call = it.turn_off();
@@ -96,7 +94,6 @@ light:
             if (initial_run) {
                 auto call = it.turn_on();
                 call.set_transition_length(0);
-                call.set_brightness(1.0);
                 call.perform();
             } else {
                 auto call = it.turn_off();
@@ -121,7 +118,6 @@ light:
             if (initial_run) {
                 auto call = it.turn_on();
                 call.set_transition_length(0);
-                call.set_brightness(1.0);
                 call.perform();
             } else {
                 auto call = it.turn_off();
@@ -146,7 +142,6 @@ light:
             if (initial_run) {
                 auto call = it.turn_on();
                 call.set_transition_length(0);
-                call.set_brightness(1.0);
                 call.perform();
             } else {
                 auto call = it.turn_off();
@@ -357,6 +352,7 @@ select:
     id: power_led_effect
     icon: mdi:lightbulb-auto
     optimistic: true
+    entity_category: "diagnostic"
     options:
       - "Aus"
       - "Kerzenflackern"
@@ -402,22 +398,27 @@ select:
             - light.turn_on:
                 id: power_led_1
                 effect: flash
+                brightness: 90%
             - delay: 500ms
             - light.turn_on:
                 id: power_led_2
                 effect: flash
+                brightness: 90%
             - delay: 500ms
             - light.turn_on:
                 id: power_led_3
                 effect: flash
+                brightness: 90%
             - delay: 500ms
             - light.turn_on:
                 id: power_led_4
                 effect: flash
+                brightness: 90%
             - delay: 500ms
             - light.turn_on:
                 id: power_led_5
                 effect: flash
+                brightness: 90%
             - delay: 500ms
             - select.first: power_led_effect
 
@@ -428,22 +429,21 @@ script:
     parameters:
       pause_array: int[]
       power_led_no: int
-
     then:
       - repeat:
           count: !lambda 'return pause_array.size();'
           then:
             - lambda: |-
                 if (power_led_no == 1) {
-                  id(power_led_1).turn_on().set_effect("flash").perform();
+                  id(power_led_1).turn_on().set_brightness(1.0).set_effect("flash").perform();
                 } else if (power_led_no == 2) {
-                  id(power_led_2).turn_on().set_effect("flash").perform();
+                  id(power_led_2).turn_on().set_brightness(1.0).set_effect("flash").perform();
                 } else if (power_led_no == 3) {
-                  id(power_led_3).turn_on().set_effect("flash").perform();
+                  id(power_led_3).turn_on().set_brightness(1.0).set_effect("flash").perform();
                 } else if (power_led_no == 4) {
-                  id(power_led_4).turn_on().set_effect("flash").perform();
+                  id(power_led_4).turn_on().set_brightness(1.0).set_effect("flash").perform();
                 } else if (power_led_no == 5) {
-                  id(power_led_5).turn_on().set_effect("flash").perform();
+                  id(power_led_5).turn_on().set_brightness(1.0).set_effect("flash").perform();
                 } else {
                   ESP_LOGW("thunder", "Unknown LED No: %d", power_led_no);
                 }
@@ -451,15 +451,15 @@ script:
                 return pause_array[iteration];
       - lambda: |-
           if (power_led_no == 1) {
-            id(power_led_1).turn_on().set_effect("flash").perform();
+            id(power_led_1).turn_on().set_brightness(1.0).set_effect("flash").perform();
           } else if (power_led_no == 2) {
-            id(power_led_2).turn_on().set_effect("flash").perform();
+            id(power_led_2).turn_on().set_brightness(1.0).set_effect("flash").perform();
           } else if (power_led_no == 3) {
-            id(power_led_3).turn_on().set_effect("flash").perform();
+            id(power_led_3).turn_on().set_brightness(1.0).set_effect("flash").perform();
           } else if (power_led_no == 4) {
-            id(power_led_4).turn_on().set_effect("flash").perform();
+            id(power_led_4).turn_on().set_brightness(1.0).set_effect("flash").perform();
           } else if (power_led_no == 5) {
-            id(power_led_5).turn_on().set_effect("flash").perform();
+            id(power_led_5).turn_on().set_brightness(1.0).set_effect("flash").perform();
           } else {
             ESP_LOGW("thunder", "Unknown LED No: %d", power_led_no);
           }
