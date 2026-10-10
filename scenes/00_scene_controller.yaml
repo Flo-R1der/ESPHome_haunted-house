@@ -93,6 +93,9 @@ script:
                     condition:
                         switch.is_on: stop_request
                     timeout: !lambda "return (stop_waiting_seconds*1000);"
+                - globals.set:
+                    id: turn_off_length
+                    value: '1000'
                 - logger.log:
                     format: "STOPPING scene!"
                     level: INFO
@@ -102,6 +105,9 @@ script:
                     format: "0s timeout given, STOPPING scene immediately!"
                     level: WARN
                     tag: scene_timeout
+                - globals.set:
+                    id: turn_off_length
+                    value: '0'
         # stop scripts
         - script.execute: stop_music_scene
         - script.execute: stop_approach_scene
@@ -113,46 +119,46 @@ script:
         # turn off lights
         - light.turn_off: 
             id: power_led_1
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: power_led_2
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: power_led_3
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: power_led_4
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: power_led_5
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_basement
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_door
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_bay_1
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_livingroom
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_small_window
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_bay_2
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_attic
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_attic_1
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         - light.turn_off: 
             id: led_attic_2
-            transition_length: 0s
+            transition_length: !lambda 'return id(turn_off_length);'
         # reset global variables
         - globals.set:
             id: scene_type_running
@@ -166,4 +172,10 @@ script:
         - globals.set:
             id: color_wandering_reversed
             value: 'false'
+
+globals:
+  - id: turn_off_length
+    type: int
+    restore_value: no
+    initial_value: '1000'
 

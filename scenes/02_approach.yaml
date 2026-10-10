@@ -65,6 +65,7 @@ script:
           red: 220
           green: 0
           blue: 255
+          transition_millis: 1000
       - script.execute:
           id: partition_light
           partition_bits: 32
@@ -72,6 +73,7 @@ script:
           red: 210
           green: 0
           blue: 255
+          transition_millis: 1000
       - light.turn_on:
           id: power_led_4
           effect: flicker
@@ -189,6 +191,7 @@ script:
           red: 220
           green: 0
           blue: 255
+          transition_millis: 2000
       - light.turn_on:
           id: power_led_4
           effect: flicker

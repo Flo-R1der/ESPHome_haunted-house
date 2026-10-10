@@ -68,6 +68,7 @@ api:
             red: !lambda "return red;"
             green: !lambda "return green;"
             blue: !lambda "return blue;"
+            transition_millis: 1000
     # Call the scene_controller script as a sensor trigger would do
     - action: random_scene
       variables:

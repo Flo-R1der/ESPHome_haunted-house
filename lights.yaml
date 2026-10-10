@@ -466,11 +466,12 @@ script:
       red: float          # 0-255
       green: float        # 0-255
       blue: float         # 0-255
+      transition_millis: int
     then:
       - lambda: |-
           ESP_LOGD("partition_light",
-          "bits=%d, brightness=%.1f, RGB=%.1f/%.1f/%.1f",
-          partition_bits, brightness, red, green, blue);
+          "bits=%d, brightness=%.0f, transition=%d, RGB=%.0f/%.0f/%.0f",
+          partition_bits, brightness, transition_millis, red, green, blue);
 
           if (partition_bits == 0) {
             id(led_door).turn_off().perform();
@@ -482,27 +483,39 @@ script:
             return;
           }
           if (partition_bits & 1) {   // led_door
-            auto call_1 = id(led_door).turn_on().set_brightness(brightness/100.0f);
-            call_1.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+            auto call_1 = id(led_door).turn_on();
+            call_1.set_brightness(brightness/100.0f).set_transition_length(transition_millis);
+            call_1.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none");
+            call_1.perform();
           }
           if (partition_bits & 2) {   // led_bay_1
-            auto call_2 = id(led_bay_1).turn_on().set_brightness(brightness/100.0f);
-            call_2.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+            auto call_2 = id(led_bay_1).turn_on();
+            call_2.set_brightness(brightness/100.0f).set_transition_length(transition_millis);
+            call_2.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none");
+            call_2.perform();
           }
           if (partition_bits & 4) {   // led_small_window
-            auto call_3 = id(led_small_window).turn_on().set_brightness(brightness/100.0f);
-            call_3.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+            auto call_3 = id(led_small_window).turn_on();
+            call_3.set_brightness(brightness/100.0f).set_transition_length(transition_millis);
+            call_3.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none");
+            call_3.perform();
           }
           if (partition_bits & 8) {   // led_bay_2
-            auto call_4 = id(led_bay_2).turn_on().set_brightness(brightness/100.0f);
-            call_4.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+            auto call_4 = id(led_bay_2).turn_on();
+            call_4.set_brightness(brightness/100.0f).set_transition_length(transition_millis);
+            call_4.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none");
+            call_4.perform();
           }
           if (partition_bits & 16) {   // led_attic_1
-            auto call_5 = id(led_attic_1).turn_on().set_brightness(brightness/100.0f);
-            call_5.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+            auto call_5 = id(led_attic_1).turn_on();
+            call_5.set_brightness(brightness/100.0f).set_transition_length(transition_millis);
+            call_5.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none");
+            call_5.perform();
           }
           if (partition_bits & 32) {   // led_attic_1
-            auto call_6 = id(led_attic_2).turn_on().set_brightness(brightness/100.0f);
-            call_6.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+            auto call_6 = id(led_attic_2).turn_on();
+            call_6.set_brightness(brightness/100.0f).set_transition_length(transition_millis);
+            call_6.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none");
+            call_6.perform();
           }
 
