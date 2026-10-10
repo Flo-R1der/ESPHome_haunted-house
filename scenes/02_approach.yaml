@@ -28,7 +28,7 @@ script:
           if (selected_scene == 2) { id(_02_ghost_laugh).execute();
           } else if (selected_scene == 6) { id(_06_harsh_wind).execute();
           } else if (selected_scene == 7) { id(_07_clock_ticking).execute();
-          // } else if (selected_scene == 9) { id(_09_creaking_door).execute();
+          } else if (selected_scene == 9) { id(_09_ghost_whisper).execute();
           // } else if (selected_scene == 19) { id(_19_wind_howl).execute();
           // } else if (selected_scene == 24) { id(_24_thunder_clap).execute();
           } else {   // ^-- updates on add/remove of scenes --^ //
@@ -42,6 +42,7 @@ script:
       - script.stop: _02_ghost_laugh
       - script.stop: _06_harsh_wind
       - script.stop: _07_clock_ticking
+      - script.stop: _09_ghost_whisper
 
 
   - id: _02_ghost_laugh
@@ -171,4 +172,25 @@ script:
                 id: led_bay_2
                 transition_length: 400ms
             - delay: 900ms
+
+  - id: _09_ghost_whisper
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 17   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 02
+          file: 09
+      - script.execute:
+          id: partition_light
+          partition_bits: 26
+          brightness: 70
+          red: 220
+          green: 0
+          blue: 255
+      - light.turn_on:
+          id: power_led_4
+          effect: flicker
+          brightness: 25%
 
