@@ -1,4 +1,7 @@
-
+# IMPORTANT: when adding or removing scenes, update:
+# - int scenes[] = {...};
+# - id(selected_scene).execute;
+# - script: stop_approach_scene
 
 
 script:
@@ -30,7 +33,7 @@ script:
           } else if (selected_scene == 7) { id(_07_clock_ticking).execute();
           } else if (selected_scene == 9) { id(_09_ghost_whisper).execute();
           } else if (selected_scene == 19) { id(_19_creaking_door).execute();
-          // } else if (selected_scene == 24) { id(_24_thunder_clap).execute();
+          } else if (selected_scene == 24) { id(_24_whispering).execute();
           } else {   // ^-- updates on add/remove of scenes --^ //
             ESP_LOGW("scenes_approach", "this script don't know a scene No: %d", selected_scene);
           }
@@ -44,6 +47,7 @@ script:
       - script.stop: _07_clock_ticking
       - script.stop: _09_ghost_whisper
       - script.stop: _19_creaking_door
+      - script.stop: _24_whispering
 
 
   - id: _02_ghost_laugh
@@ -237,4 +241,60 @@ script:
           green: 0%
           blue: 0%
           transition_length: 5s
+
+  - id: _24_whispering
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 26   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 02
+          file: 24
+      - globals.set:
+          id: color_wandering_length_ms
+          value: '5750'
+      - light.turn_on:
+          id: power_led_5
+          effect: flicker
+          brightness: 20%
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 90%
+          red: 0%
+          green: 100%
+          blue: 0%
+          effect: Firework
+      - repeat:
+          count: 3
+          then:
+            - light.turn_on:
+                id: led_attic
+                brightness: 100%
+                red: 100%
+                green: 0%
+                blue: 0%
+                effect: Color Wandering
+            - delay: 5.2s
+            - globals.set:
+                id: color_wandering_reversed
+                value: 'true'
+            - light.turn_off:
+                id: led_attic
+                transition_length: 0s
+            - light.turn_on:
+                id: led_attic
+                brightness: 100%
+                red: 100%
+                green: 0%
+                blue: 0%
+                effect: Color Wandering
+            - delay: 5.2s
+            - globals.set:
+                id: color_wandering_reversed
+                value: 'false'
+            - light.turn_off:
+                id: led_attic
+                transition_length: 0s
+
 

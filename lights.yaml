@@ -181,6 +181,12 @@ light:
           name: Disco
           twinkle_probability: 15%
           progress_interval: 12ms
+      - addressable_fireworks:
+          name: Firework
+          update_interval: 32ms
+          spark_probability: 15%
+          use_random_color: false
+          fade_out_rate: 120
   # led_door: LED 01-09
   - platform: partition
     id: led_door
@@ -229,6 +235,12 @@ light:
           name: Disco
           twinkle_probability: 15%
           progress_interval: 12ms
+      - addressable_fireworks:
+          name: Firework
+          update_interval: 32ms
+          spark_probability: 15%
+          use_random_color: false
+          fade_out_rate: 120
   # led_small_window: LED 20-23
   - platform: partition
     id: led_small_window
@@ -276,6 +288,12 @@ light:
           name: Disco
           twinkle_probability: 15%
           progress_interval: 12ms
+      - addressable_fireworks:
+          name: Firework
+          update_interval: 32ms
+          spark_probability: 20%
+          use_random_color: false
+          fade_out_rate: 120
   # led_attic_1: LED 38-44
   - platform: partition
     id: led_attic_1
