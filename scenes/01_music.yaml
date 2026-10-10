@@ -1,4 +1,7 @@
-
+# IMPORTANT: when adding or removing scenes, update:
+# - int scenes[] = {...};
+# - id(selected_scene).execute;
+# - script: stop_approach_scene
 
 
 script:
@@ -29,7 +32,7 @@ script:
           } else if (selected_scene == 12) { id(_12_music_box).execute();
           } else if (selected_scene == 37) { id(_37_music_box).execute();
           } else if (selected_scene == 50) { id(_50_thriller).execute();
-          // } else if (selected_scene == 51) { id(_51_wind_howl).execute();
+          } else if (selected_scene == 51) { id(_51_ghostbusters).execute();
           // } else if (selected_scene == 52) { id(_52_thunder_clap).execute();
           // } else if (selected_scene == 53) { id(_53_ghostly_laughter).execute();
           // } else if (selected_scene == 54) { id(_54_suspenseful_strings).execute();
@@ -45,6 +48,7 @@ script:
       - script.stop: _12_music_box
       - script.stop: _37_music_box
       - script.stop: _50_thriller
+      - script.stop: _51_ghostbusters
 
 
   - id: _10_horror_orchestra
@@ -316,4 +320,55 @@ script:
           id: thunder
           pause_array: [2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030]
           power_led_no: 4
+
+  - id: _51_ghostbusters
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 112.2   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 01
+          file: 51     # track / scene number
+      - delay: 2.5s
+      - light.turn_on:
+          id: power_led_1
+          effect: flicker
+          brightness: 25%
+      - delay: 3.5s
+      - light.turn_on:
+          id: led_attic
+          red: 0%
+          green: 100%
+          blue: 0%
+          brightness: 100%
+          effect: Firework
+      - light.turn_on:
+          id: led_basement
+          red: 0%
+          green: 100%
+          blue: 0%
+          brightness: 100%
+          effect: Firework
+      - delay: 7s
+      - script.execute:
+          id: thunder
+          pause_array: [2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080]
+          power_led_no: 3
+      - script.execute:
+          id: thunder
+          pause_array: [2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080,2080]
+          power_led_no: 4
+      - light.turn_on:
+          id: led_basement
+          brightness: 90%
+          effect: Rainbow
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 90%
+          effect: Rainbow
+      - light.turn_on:
+          id: led_attic
+          brightness: 90%
+          effect: Disco
 
