@@ -101,23 +101,22 @@ script:
       - globals.set:
           id: color_wandering_reversed
           value: 'true'
-      - delay: 50ms   # wait for the global variable to be available
+      - light.turn_off:
+          id: led_attic
       - light.turn_on:
           id: led_attic
           brightness: 100%
           red: 0%
           green: 100%
           blue: 0%
-      - light.turn_on:
-          id: led_attic
           effect: "Color Wandering"
-      - globals.set:
-          id: color_wandering_reversed
-          value: 'false'
       - delay: 6s
       - light.turn_off:
           id: led_attic
           transition_length: 1s
+      - globals.set:
+          id: color_wandering_reversed
+          value: 'false'
       - light.turn_on:
           id: power_led_4
           effect: flicker
@@ -172,30 +171,22 @@ script:
           red: 95%
           green: 0%
           blue: 100%
-      - light.turn_on:
-          id: led_basement
           effect: "Color Wandering"
       - delay: 7s
       - light.turn_off:
           id: led_basement
           transition_length: 1s
-      - globals.set:
-          id: color_wandering_reversed
-          value: 'true'
-      - delay: 20ms   # wait for the global variable to be available
       - light.turn_on:
           id: led_livingroom
           brightness: 100%
           red: 95%
           green: 0%
           blue: 100%
-      - light.turn_on:
-          id: led_livingroom
           effect: "Color Wandering"
+      - delay: 7s
       - globals.set:
           id: color_wandering_reversed
           value: 'false'
-      - delay: 7s
       - light.turn_off:
           id: led_livingroom
           transition_length: 1s
@@ -205,8 +196,6 @@ script:
           red: 100%
           green: 0%
           blue: 0%
-      - light.turn_on:
-          id: led_attic
           effect: "Color Wandering"
       - delay: 7.5s
       - light.turn_off:

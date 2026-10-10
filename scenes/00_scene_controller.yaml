@@ -170,6 +170,9 @@ script:
             id: volume
             value: !lambda 'return id(last_volume);'
         - globals.set:
+            id: color_wandering_length_ms
+            value: '5000'
+        - globals.set:
             id: color_wandering_reversed
             value: 'false'
 
