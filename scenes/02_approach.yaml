@@ -26,7 +26,7 @@ script:
       - lambda: |-
           int selected_scene = id(scene_running);
           if (selected_scene == 2) { id(_02_ghost_laugh).execute();
-          // } else if (selected_scene == 6) { id(_06_ghostly_whispers).execute();
+          } else if (selected_scene == 6) { id(_06_harsh_wind).execute();
           // } else if (selected_scene == 7) { id(_07_eerie_piano).execute();
           // } else if (selected_scene == 9) { id(_09_creaking_door).execute();
           // } else if (selected_scene == 19) { id(_19_wind_howl).execute();
@@ -40,6 +40,7 @@ script:
     mode: single
     then:
       - script.stop: _02_ghost_laugh
+      - script.stop: _06_harsh_wind
 
 
   - id: _02_ghost_laugh
@@ -73,4 +74,44 @@ script:
           id: power_led_4
           effect: flicker
           brightness: 35%
+
+  - id: _06_harsh_wind
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 14   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 02
+          file: 06
+      - light.turn_on:
+          id: power_led_2
+          effect: flicker
+          brightness: 35%
+      - light.turn_on:
+          id: power_led_4
+          effect: flicker
+          brightness: 25%
+      - delay: 5s
+      - light.turn_off:
+          id: power_led_4
+      - light.turn_on:
+          id: power_led_5
+          effect: flicker
+          brightness: 25%
+      - delay: 3s
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 70%
+          red: 90%
+          green: 0%
+          blue: 100%
+      - light.turn_on:
+          id: led_attic
+          brightness: 70%
+          red: 90%
+          green: 0%
+          blue: 100%
+      - light.turn_off:
+          id: power_led_2
 
