@@ -111,20 +111,48 @@ script:
         # stop audio
         - dfplayer.stop
         # turn off lights
-        - light.turn_off: power_led_1
-        - light.turn_off: power_led_2
-        - light.turn_off: power_led_3
-        - light.turn_off: power_led_4
-        - light.turn_off: power_led_5
-        - light.turn_off: led_basement
-        - light.turn_off: led_door
-        - light.turn_off: led_bay_1
-        - light.turn_off: led_livingroom
-        - light.turn_off: led_small_window
-        - light.turn_off: led_bay_2
-        - light.turn_off: led_attic
-        - light.turn_off: led_roof_1
-        - light.turn_off: led_roof_2
+        - light.turn_off: 
+            id: power_led_1
+            transition_length: 0s
+        - light.turn_off: 
+            id: power_led_2
+            transition_length: 0s
+        - light.turn_off: 
+            id: power_led_3
+            transition_length: 0s
+        - light.turn_off: 
+            id: power_led_4
+            transition_length: 0s
+        - light.turn_off: 
+            id: power_led_5
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_basement
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_door
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_bay_1
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_livingroom
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_small_window
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_bay_2
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_attic
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_attic_1
+            transition_length: 0s
+        - light.turn_off: 
+            id: led_attic_2
+            transition_length: 0s
         # reset global variables
         - globals.set:
             id: scene_type_running

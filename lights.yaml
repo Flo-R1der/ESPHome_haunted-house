@@ -185,7 +185,6 @@ light:
   - platform: partition
     id: led_door
     internal: true
-    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 0
@@ -194,7 +193,6 @@ light:
   - platform: partition
     id: led_bay_1
     internal: true
-    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 11
@@ -235,7 +233,6 @@ light:
   - platform: partition
     id: led_small_window
     internal: true
-    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 19
@@ -244,7 +241,6 @@ light:
   - platform: partition
     id: led_bay_2
     internal: true
-    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 25
@@ -280,20 +276,18 @@ light:
           name: Disco
           twinkle_probability: 15%
           progress_interval: 12ms
-  # led_roof_1: LED 38-44
+  # led_attic_1: LED 38-44
   - platform: partition
-    id: led_roof_1
+    id: led_attic_1
     internal: true
-    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 37
         to: 43
-  # led_roof_2: LED 48-54
+  # led_attic_2: LED 48-54
   - platform: partition
-    id: led_roof_2
+    id: led_attic_2
     internal: true
-    default_transition_length: 0s
     segments:
       - id: rgb_led_strip
         from: 47
@@ -473,100 +467,42 @@ script:
       green: float        # 0-255
       blue: float         # 0-255
     then:
-      # 0 = all off
-      - if:
-          condition:
-            lambda: 'return partition_bits == 0;'
-          then:
-            - light.turn_off:
-                id: led_door
-            - light.turn_off:
-                id: led_bay_1
-            - light.turn_off:
-                id: led_small_window
-            - light.turn_off:
-                id: led_bay_2
-            - light.turn_off:
-                id: led_roof_1
-            - light.turn_off:
-                id: led_roof_2
-            - script.stop: partition_light
+      - lambda: |-
+          ESP_LOGD("partition_light",
+          "bits=%d, brightness=%.1f, RGB=%.1f/%.1f/%.1f",
+          partition_bits, brightness, red, green, blue);
 
-      # bit 0 = led_door
-      - if:
-          condition:
-            lambda: 'return partition_bits & 1;'
-          then:
-            - light.turn_on:
-                id: led_door
-                brightness: !lambda 'return brightness/100;'
-                red: !lambda 'return red/255;'
-                green: !lambda 'return green/255;'
-                blue: !lambda 'return blue/255;'
-                effect: 'none'
-
-      # bit 1 = led_bay_1
-      - if:
-          condition:
-            lambda: 'return partition_bits & 2;'
-          then:
-            - light.turn_on:
-                id: led_bay_1
-                brightness: !lambda 'return brightness/100;'
-                red: !lambda 'return red/255;'
-                green: !lambda 'return green/255;'
-                blue: !lambda 'return blue/255;'
-                effect: 'none'
-
-      # bit 2 = led_small_window
-      - if:
-          condition:
-            lambda: 'return partition_bits & 4;'
-          then:
-            - light.turn_on:
-                id: led_small_window
-                brightness: !lambda 'return brightness/100;'
-                red: !lambda 'return red/255;'
-                green: !lambda 'return green/255;'
-                blue: !lambda 'return blue/255;'
-                effect: 'none'
-
-      # bit 3 = led_bay_2
-      - if:
-          condition:
-            lambda: 'return partition_bits & 8;'
-          then:
-            - light.turn_on:
-                id: led_bay_2
-                brightness: !lambda 'return brightness/100;'
-                red: !lambda 'return red/255;'
-                green: !lambda 'return green/255;'
-                blue: !lambda 'return blue/255;'
-                effect: 'none'
-
-      # bit 4 = led_roof_1
-      - if:
-          condition:
-            lambda: 'return partition_bits & 16;'
-          then:
-            - light.turn_on:
-                id: led_roof_1
-                brightness: !lambda 'return brightness/100;'
-                red: !lambda 'return red/255;'
-                green: !lambda 'return green/255;'
-                blue: !lambda 'return blue/255;'
-                effect: 'none'
-
-      # bit 5 = led_roof_2
-      - if:
-          condition:
-            lambda: 'return partition_bits & 32;'
-          then:
-            - light.turn_on:
-                id: led_roof_2
-                brightness: !lambda 'return brightness/100;'
-                red: !lambda 'return red/255;'
-                green: !lambda 'return green/255;'
-                blue: !lambda 'return blue/255;'
-                effect: 'none'
+          if (partition_bits == 0) {
+            id(led_door).turn_off().perform();
+            id(led_bay_1).turn_off().perform();
+            id(led_small_window).turn_off().perform();
+            id(led_bay_2).turn_off().perform();
+            id(led_attic_1).turn_off().perform();
+            id(led_attic_2).turn_off().perform();
+            return;
+          }
+          if (partition_bits & 1) {   // led_door
+            auto call_1 = id(led_door).turn_on().set_brightness(brightness/100.0f);
+            call_1.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+          }
+          if (partition_bits & 2) {   // led_bay_1
+            auto call_2 = id(led_bay_1).turn_on().set_brightness(brightness/100.0f);
+            call_2.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+          }
+          if (partition_bits & 4) {   // led_small_window
+            auto call_3 = id(led_small_window).turn_on().set_brightness(brightness/100.0f);
+            call_3.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+          }
+          if (partition_bits & 8) {   // led_bay_2
+            auto call_4 = id(led_bay_2).turn_on().set_brightness(brightness/100.0f);
+            call_4.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+          }
+          if (partition_bits & 16) {   // led_attic_1
+            auto call_5 = id(led_attic_1).turn_on().set_brightness(brightness/100.0f);
+            call_5.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+          }
+          if (partition_bits & 32) {   // led_attic_1
+            auto call_6 = id(led_attic_2).turn_on().set_brightness(brightness/100.0f);
+            call_6.set_rgb(red/255.0f, green/255.0f, blue/255.0f).set_effect("none").perform();
+          }
 

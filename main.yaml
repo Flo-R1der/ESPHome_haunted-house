@@ -54,8 +54,8 @@ api:
         # bit 1 = led_bay_1
         # bit 2 = led_small_window
         # bit 3 = led_bay_2
-        # bit 4 = led_roof_1
-        # bit 5 = led_roof_2
+        # bit 4 = led_attic_1
+        # bit 5 = led_attic_2
         brightness: int   # in %
         red: int     # range: 0-255
         green: int   # range: 0-255
