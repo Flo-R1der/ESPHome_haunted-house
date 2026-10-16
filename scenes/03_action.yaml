@@ -31,7 +31,7 @@ script:
           if (selected_scene == 5) { id(_05_cemetery_wind).execute();
           } else if (selected_scene == 8) { id(_08_winter_wind).execute();
           } else if (selected_scene == 16) { id(_16_whispering_voices).execute();
-          // } else if (selected_scene == 20) { id(_20_creaking_door).execute();
+          } else if (selected_scene == 20) { id(_20_scream).execute();
           // } else if (selected_scene == 21) { id(_21_wind_howl).execute();
           // } else if (selected_scene == 25) { id(_25_thunder_clap).execute();
           // } else if (selected_scene == 33) { id(_33_wind_howl).execute();
@@ -49,6 +49,7 @@ script:
       - script.stop: _05_cemetery_wind
       - script.stop: _08_winter_wind
       - script.stop: _16_whispering_voices
+      - script.stop: _20_scream
 
 
   - id: _05_cemetery_wind
@@ -186,4 +187,41 @@ script:
           green: 0%
           blue: 0%
           effect: "Firework"
+
+  - id: _20_scream
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 6   # duration of the scene
+      - number.set:
+          id: volume
+          value: 100   # will be reset by the stop script
+      - dfplayer.play_folder:
+          folder: 03
+          file: 20
+      - script.execute:
+          id: partition_light
+          partition_bits: 15
+          brightness: 70
+          red: 255
+          green: 0
+          blue: 0
+          transition_millis: 1500
+      - delay: 1500ms
+      - script.execute:
+          id: thunder
+          pause_array: [200, 500, 200, 250, 400]
+          power_led_no: 1
+      - delay: 300ms
+      - script.execute:
+          id: thunder
+          pause_array: [300, 500, 250, 300]
+          power_led_no: 3
+      - delay: 200ms
+      - script.execute:
+          id: thunder
+          pause_array: [200, 300, 400]
+          power_led_no: 5
+
 
