@@ -18,7 +18,7 @@ script:
           int selected_scene = requested_scene;
           if (requested_scene == 0) {
             // define the available scene numbers
-            int scenes[] = {5, 8, 16, 20, 21, 25, 33, 38, 39, 44};   // <-- updates on add/remove of scenes
+            int scenes[] = {5, 8, 16, 20, 21, 33, 38, 39, 44};   // <-- updates on add/remove of scenes
             int array_size = sizeof(scenes) / sizeof(scenes[0]);
             // randomly select a scene from the available scenes
             selected_scene = scenes[rand() % array_size];
@@ -33,8 +33,7 @@ script:
           } else if (selected_scene == 16) { id(_16_whispering_voices).execute();
           } else if (selected_scene == 20) { id(_20_scream).execute();
           } else if (selected_scene == 21) { id(_21_creaking_floor).execute();
-          // } else if (selected_scene == 25) { id(_25_thunder_clap).execute();
-          // } else if (selected_scene == 33) { id(_33_wind_howl).execute();
+          } else if (selected_scene == 33) { id(_33_wolf_howling).execute();
           // } else if (selected_scene == 38) { id(_38_thunder_clap).execute();
           // } else if (selected_scene == 39) { id(_39_ghostly_laughter).execute();
           // } else if (selected_scene == 44) { id(_44_suspenseful_strings).execute();
@@ -51,6 +50,7 @@ script:
       - script.stop: _16_whispering_voices
       - script.stop: _20_scream
       - script.stop: _21_creaking_floor
+      - script.stop: _33_wolf_howling
 
 
   - id: _05_cemetery_wind
@@ -275,4 +275,28 @@ script:
           id: power_led_2
           effect: flicker
           brightness: 20%
+
+  - id: _33_wolf_howling
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 8   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 03
+          file: 33
+      - light.turn_on:
+          id: led_basement
+          brightness: 70%
+          red: 0%
+          green: 100%
+          blue: 0%
+          transition_length: 2s
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 70%
+          red: 0%
+          green: 100%
+          blue: 0%
+          transition_length: 2s
 
