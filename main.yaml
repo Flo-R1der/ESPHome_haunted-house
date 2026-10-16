@@ -139,6 +139,13 @@ dfplayer:
   uart_id: dfplayer_uart
   id: my_dfplayer
 
+output:
+  - platform: ledc
+    id: fan_pwm
+    pin: GPIO15
+    frequency: 4882Hz
+
+
 number:
   - platform: template
     name: "Volume"
@@ -171,6 +178,12 @@ button:
     on_press:
       - dfplayer.stop
 
+fan:
+  - platform: speed
+    output: fan_pwm
+    name: "Lüfter"
+    id: fan_livingroom
+    speed_count: 100
 
 packages:
   - !include lights.yaml

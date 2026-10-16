@@ -89,10 +89,7 @@ script:
                     args: [ 'stop_waiting_seconds' ]
                     level: INFO
                     tag: scene_timeout
-                - wait_until:
-                    condition:
-                        switch.is_on: stop_request
-                    timeout: !lambda "return (stop_waiting_seconds*1000);"
+                - delay: !lambda "return (stop_waiting_seconds*1000);"
                 - globals.set:
                     id: turn_off_length
                     value: '1000'
@@ -115,7 +112,9 @@ script:
         - script.execute: stop_departure_scene
         - script.stop: thunder
         # stop audio
-        - dfplayer.stop
+        - dfplayer.stop:
+        # stopping fan
+        - fan.turn_off: fan_livingroom
         # turn off lights
         - light.turn_off: 
             id: power_led_1
