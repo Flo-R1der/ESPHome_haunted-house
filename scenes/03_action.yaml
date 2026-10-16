@@ -30,7 +30,7 @@ script:
           int selected_scene = id(scene_running);
           if (selected_scene == 5) { id(_05_cemetery_wind).execute();
           } else if (selected_scene == 8) { id(_08_winter_wind).execute();
-          // } else if (selected_scene == 16) { id(_16_eerie_piano).execute();
+          } else if (selected_scene == 16) { id(_16_whispering_voices).execute();
           // } else if (selected_scene == 20) { id(_20_creaking_door).execute();
           // } else if (selected_scene == 21) { id(_21_wind_howl).execute();
           // } else if (selected_scene == 25) { id(_25_thunder_clap).execute();
@@ -48,6 +48,7 @@ script:
     then:
       - script.stop: _05_cemetery_wind
       - script.stop: _08_winter_wind
+      - script.stop: _16_whispering_voices
 
 
   - id: _05_cemetery_wind
@@ -133,4 +134,56 @@ script:
           effect: Firework
       - light.turn_off:
           id: power_led_1
+
+  - id: _16_whispering_voices
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 19   # duration of the scene
+      - number.set:
+          id: volume
+          value: 100   # will be reset by the stop script
+      - globals.set:
+          id: color_wandering_length_ms
+          value: '6500'
+      - globals.set:
+          id: color_wandering_reversed
+          value: 'true'
+      - delay: 50ms
+      - dfplayer.play_folder:
+          folder: 03
+          file: 16
+      - light.turn_on:
+          id: led_basement
+          brightness: 100%
+          red: 80%
+          green: 0%
+          blue: 100%
+          effect: "Color Wandering"
+      - delay: 6s
+      - light.turn_off:
+          id: led_basement
+          transition_length: 1s
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 100%
+          red: 80%
+          green: 0%
+          blue: 100%
+          effect: "Color Wandering"
+      - light.turn_on:
+          id: power_led_3
+          effect: flicker
+          brightness: 20%
+      - delay: 6s
+      - light.turn_off:
+          id: led_basement
+      - light.turn_on:
+          id: led_attic
+          brightness: 100%
+          red: 100%
+          green: 0%
+          blue: 0%
+          effect: "Firework"
 
