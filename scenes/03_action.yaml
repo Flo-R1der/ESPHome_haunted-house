@@ -36,7 +36,7 @@ script:
           } else if (selected_scene == 33) { id(_33_wolf_howling).execute();
           } else if (selected_scene == 38) { id(_38_horror_trailer).execute();
           } else if (selected_scene == 39) { id(_39_thunder).execute();
-          // } else if (selected_scene == 44) { id(_44_suspenseful_strings).execute();
+          } else if (selected_scene == 44) { id(_44_thunder).execute();
           } else {   // ^-- updates on add/remove of scenes --^ //
             ESP_LOGW("scenes_action", "this script don't know a scene No: %d", selected_scene);
           }
@@ -53,6 +53,7 @@ script:
       - script.stop: _33_wolf_howling
       - script.stop: _38_horror_trailer
       - script.stop: _39_thunder
+      - script.stop: _44_thunder
 
 
   - id: _05_cemetery_wind
@@ -383,5 +384,30 @@ script:
       - script.execute:
           id: thunder
           pause_array: [200, 300, 200, 350]
+          power_led_no: 5
+
+  - id: _44_thunder
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 6   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 03
+          file: 39
+      - delay: 500ms
+      - script.execute:
+          id: thunder
+          pause_array: [200, 300, 550, 400]
+          power_led_no: 1
+      - delay: 100ms
+      - script.execute:
+          id: thunder
+          pause_array: [300, 500, 550]
+          power_led_no: 3
+      - delay: 200ms
+      - script.execute:
+          id: thunder
+          pause_array: [200, 300, 200]
           power_led_no: 5
 
