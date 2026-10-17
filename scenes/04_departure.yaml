@@ -1,4 +1,7 @@
-
+# IMPORTANT: when adding or removing scenes, update:
+# - int scenes[] = {...};
+# - id(selected_scene).execute;
+# - script: stop_approach_scene
 
 
 script:
@@ -26,12 +29,12 @@ script:
       - lambda: |-
           int selected_scene = id(scene_running);
           if (selected_scene == 1) { id(_01_witch_laugh).execute();
-          // } else if (selected_scene == 14) { id(_14_ghostly_whispers).execute();
-          // } else if (selected_scene == 15) { id(_15_eerie_piano).execute();
-          // } else if (selected_scene == 23) { id(_23_creaking_door).execute();
-          // } else if (selected_scene == 28) { id(_28_wind_howl).execute();
-          // } else if (selected_scene == 46) { id(_46_thunder_clap).execute();
-          // } else if (selected_scene == 48) { id(_48_ghostly_laughter).execute();
+          } else if (selected_scene == 14) { id(_14_evil_laugh).execute();
+          } else if (selected_scene == 15) { id(_15_monster_laugh).execute();
+          } else if (selected_scene == 23) { id(_23_witch_laugh).execute();
+          } else if (selected_scene == 28) { id(_28_witch_laugh).execute();
+          } else if (selected_scene == 46) { id(_46_child_laughter).execute();
+          } else if (selected_scene == 48) { id(_48_thunder).execute();
           } else {   // ^-- updates on add/remove of scenes --^ //
             ESP_LOGW("scenes_departure", "this script don't know a scene No: %d", selected_scene);
           }
@@ -41,6 +44,12 @@ script:
     mode: single
     then:
       - script.stop: _01_witch_laugh
+      - script.stop: _14_evil_laugh
+      - script.stop: _15_monster_laugh
+      - script.stop: _23_witch_laugh
+      - script.stop: _28_witch_laugh
+      - script.stop: _46_child_laughter
+      - script.stop: _48_thunder
 
 
   - id: _01_witch_laugh
@@ -48,8 +57,129 @@ script:
     then:
       - script.execute: 
           id: stop_scene
-          stop_waiting_seconds: 6   # duration of the scene
+          stop_waiting_seconds: 4   # duration of the scene
       - dfplayer.play_folder:
           folder: 04
           file: 01
+      - light.turn_on:
+          id: power_led_4
+          effect: flicker
+          brightness: 25%
+
+  - id: _14_evil_laugh
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 3   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 04
+          file: 14
+      - light.turn_on:
+          id: led_basement
+          brightness: 50%
+          red: 100%
+          green: 0%
+          blue: 0%
+          transition_length: 2s
+
+  - id: _15_monster_laugh
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 10   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 04
+          file: 15
+      - delay: 3.5s
+      - light.turn_on:
+          id: led_basement
+          brightness: 50%
+          red: 100%
+          green: 0%
+          blue: 0%
+          transition_length: 2s
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 50%
+          red: 100%
+          green: 0%
+          blue: 0%
+          transition_length: 2s
+
+  - id: _23_witch_laugh
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 7   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 04
+          file: 23
+      - light.turn_on:
+          id: led_attic
+          brightness: 60%
+          red: 0%
+          green: 100%
+          blue: 0%
+          transition_length: 2s
+
+  - id: _28_witch_laugh
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 4   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 04
+          file: 28
+      - light.turn_on:
+          id: led_attic
+          brightness: 50%
+          red: 100%
+          green: 100%
+          blue: 100%
+          transition_length: 1s
+
+  - id: _46_child_laughter
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 3   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 04
+          file: 46
+      - light.turn_on:
+          id: led_basement
+          brightness: 50%
+          red: 85%
+          green: 0%
+          blue: 100%
+          transition_length: 1s
+
+  - id: _48_thunder
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 12   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 04
+          file: 48
+      - delay: 500ms
+      - script.execute:
+          id: thunder
+          pause_array: [200, 300, 550, 400, 1350]
+          power_led_no: 1
+      - delay: 100ms
+      - script.execute:
+          id: thunder
+          pause_array: [300, 500, 550, 1000, 400]
+          power_led_no: 3
+      - script.execute:
+          id: thunder
+          pause_array: [500, 550, 1000, 400]
+          power_led_no: 4
 
