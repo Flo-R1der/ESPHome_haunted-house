@@ -33,7 +33,7 @@ script:
           } else if (selected_scene == 37) { id(_37_music_box).execute();
           } else if (selected_scene == 50) { id(_50_thriller).execute();
           } else if (selected_scene == 51) { id(_51_ghostbusters).execute();
-          // } else if (selected_scene == 52) { id(_52_thunder_clap).execute();
+          } else if (selected_scene == 52) { id(_52_rob_zombie).execute();
           // } else if (selected_scene == 53) { id(_53_ghostly_laughter).execute();
           // } else if (selected_scene == 54) { id(_54_suspenseful_strings).execute();
           } else {   // ^-- updates on add/remove of scenes --^ //
@@ -49,6 +49,7 @@ script:
       - script.stop: _37_music_box
       - script.stop: _50_thriller
       - script.stop: _51_ghostbusters
+      - script.stop: _52_rob_zombie
 
 
   - id: _10_horror_orchestra
@@ -377,4 +378,125 @@ script:
           id: led_attic
           brightness: 90%
           effect: Disco
+
+  - id: _52_rob_zombie
+    mode: single 
+    then:
+      - script.execute: 
+          id: stop_scene
+          stop_waiting_seconds: 58.5   # duration of the scene
+      - dfplayer.play_folder:
+          folder: 01
+          file: 52     # track / scene number
+      - delay: 3s
+      - light.turn_on:
+          id: power_led_1
+          effect: flicker
+          brightness: 25%
+      - light.turn_on:
+          id: power_led_2
+          effect: flicker
+          brightness: 25%
+      - delay: 2s
+      - fan.turn_on: fan_livingroom
+      - light.turn_on:
+          id: led_basement
+          red: 80%
+          green: 0%
+          blue: 100%
+          brightness: 100%
+          effect: Firework
+      - light.turn_on:
+          id: led_livingroom
+          red: 80%
+          green: 0%
+          blue: 100%
+          brightness: 100%
+          effect: Firework
+      - delay: 7.5s
+      - light.turn_on:
+          id: power_led_1
+          brightness: 70%
+          effect: flash
+      - light.turn_on:
+          id: power_led_2
+          brightness: 70%
+          effect: flash
+      - light.turn_on:
+          id: power_led_3
+          brightness: 70%
+          effect: flash
+      - light.turn_on:
+          id: power_led_4
+          brightness: 70%
+          effect: flash
+      - light.turn_on:
+          id: led_attic
+          brightness: 100%
+          effect: Disco
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 100%
+          effect: Disco
+      - light.turn_on:
+          id: led_basement
+          brightness: 100%
+          effect: Disco
+      - delay: 100ms
+      - fan.turn_off: fan_livingroom
+      - light.turn_on:
+          id: power_led_1
+          brightness: 25%
+          effect: flicker
+      - light.turn_on:
+          id: power_led_2
+          brightness: 25%
+          effect: flicker
+      - light.turn_on:
+          id: power_led_3
+          brightness: 25%
+          effect: flicker
+      - light.turn_on:
+          id: power_led_4
+          brightness: 25%
+          effect: flicker
+      - delay: 14.0s
+      - light.turn_off: power_led_1
+      - light.turn_off: power_led_2
+      - light.turn_off: power_led_3
+      - light.turn_off: power_led_4
+      - light.turn_on:
+          id: led_attic
+          brightness: 100%
+          effect: Disco
+      - delay: 16.0s
+      - light.turn_on:
+          id: power_led_1
+          brightness: 40%
+          effect: none
+      - light.turn_on:
+          id: power_led_2
+          brightness: 40%
+          effect: none
+      - light.turn_on:
+          id: power_led_3
+          brightness: 40%
+          effect: none
+      - light.turn_on:
+          id: power_led_4
+          brightness: 40%
+          effect: none
+      - delay: 0.5s
+      - light.turn_on:
+          id: led_attic
+          brightness: 100%
+          effect: Rainbow
+      - light.turn_on:
+          id: led_livingroom
+          brightness: 100%
+          effect: Rainbow
+      - light.turn_on:
+          id: led_basement
+          brightness: 100%
+          effect: Rainbow
 
