@@ -158,7 +158,7 @@ script:
     then:
       - script.execute: 
           id: stop_scene
-          stop_waiting_seconds: 32   # duration of the scene
+          stop_waiting_seconds: 23   # duration of the scene
       - dfplayer.play_folder:
           folder: 01
           file: 37     # track / scene number
@@ -242,7 +242,9 @@ script:
           id: power_led_4
           effect: flicker
           brightness: 30%
-      - delay: 5.5s
+      - delay: 2s
+      - fan.turn_on: fan_livingroom
+      - delay: 3.5s
       - light.turn_on:
           id: led_attic
           transition_length: 2s
@@ -256,6 +258,7 @@ script:
           effect: flicker
           brightness: 20%
       - delay: 14.3s   # intro end
+      - fan.turn_off: fan_livingroom
       - lambda: |-
           auto call = id(power_led_4).turn_off();
           call.set_transition_length(0).perform();
@@ -311,7 +314,7 @@ script:
           id: led_attic
           brightness: 100%
           effect: Disco
-      - delay: 3.6s
+      - delay: 1.6s
       - script.execute:
           id: thunder
           pause_array: [2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030,2030]
@@ -326,7 +329,10 @@ script:
     then:
       - script.execute: 
           id: stop_scene
-          stop_waiting_seconds: 112.2   # duration of the scene
+          stop_waiting_seconds: 112.5   # duration of the scene
+      - number.set:
+          id: volume
+          value: 100   # will be reset by the stop script
       - dfplayer.play_folder:
           folder: 01
           file: 51     # track / scene number
