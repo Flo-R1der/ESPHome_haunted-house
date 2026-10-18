@@ -176,6 +176,23 @@ script:
             value: 'false'
 
 globals:
+  - id: scene_type_running
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # 0 = no scene
+    # 1 = scene type "music" running
+    # 2 = scene type "approach" running
+    # 3 = scene type "action" running
+    # 4 = scene type "departure" running
+
+  - id: scene_running
+    type: int
+    restore_value: no
+    initial_value: '0'
+    # 0 = no scene selected
+    # n = the number of the scene
+
   - id: turn_off_length
     type: int
     restore_value: no
