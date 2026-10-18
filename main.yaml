@@ -163,6 +163,46 @@ number:
       - dfplayer.set_volume:
           volume: !lambda "return (int) round(x * 30.0 / 100.0);"
 
+  - platform: template
+    name: "Mindesthelligkeit"
+    id: light_threshold
+    entity_category: config
+    min_value: 0
+    max_value: 100
+    step: 5
+    unit_of_measurement: lx
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 50
+
+  - platform: template
+    name: "Action Distanz"
+    id: action_distance
+    entity_category: config
+    min_value: 50
+    max_value: 300
+    step: 10
+    unit_of_measurement: cm
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 150
+
+  - platform: template
+    name: "Departure Distanz"
+    id: departure_distance
+    entity_category: config
+    min_value: 100
+    max_value: 600
+    step: 10
+    unit_of_measurement: cm
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 300
+
+
 button:
   - platform: template
     name: "Zufallswiedergabe"
