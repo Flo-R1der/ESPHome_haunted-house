@@ -269,6 +269,26 @@ binary_sensor:
       filters:
         - delayed_on: 200ms
         - delayed_off: 30s
+      on_press:
+        then:
+          - if:
+              condition:
+                - lambda: |-
+                    return id(ambient_light).state <=
+                            id(light_threshold).state;
+                - lambda: |-
+                    return id(scene_type_running) == 0;
+                    // only trigger, if no scene is running
+                - switch.is_off: stop_request
+              then:
+                - logger.log:
+                    format: "APPROACH triggered"
+                    level: INFO
+                    tag: ld2410_presence
+                - script.execute:
+                    id: scene_controller
+                    scene_type: 2   # 1 = music, 2 = approach + music
+
 
 sensor:
   - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
