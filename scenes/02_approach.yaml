@@ -1,3 +1,4 @@
+# The dispatcher calls the correct scene script, which care about the "show"
 # IMPORTANT: when adding or removing scenes, update:
 # - int scenes[] = {...};
 # - id(selected_scene).execute;
@@ -18,7 +19,7 @@ script:
           int selected_scene = requested_scene;
           if (requested_scene == 0) {
             // define the available scene numbers
-            int scenes[] = {2, 6, 7, 9, 19, 24};   // <-- updates on add/remove of scenes
+            int scenes[] = {2, 6, 7, 9, 19, 24};   // <-- UPDATE on add/remove of scenes
             int array_size = sizeof(scenes) / sizeof(scenes[0]);
             // randomly select a scene from the available scenes
             selected_scene = scenes[rand() % array_size];
@@ -34,7 +35,7 @@ script:
           } else if (selected_scene == 9) { id(_09_ghost_whisper).execute();
           } else if (selected_scene == 19) { id(_19_creaking_door).execute();
           } else if (selected_scene == 24) { id(_24_whispering).execute();
-          } else {   // ^-- updates on add/remove of scenes --^ //
+          } else {   // ^-- UPDATE on add/remove of scenes --^ //
             ESP_LOGW("scenes_approach", "this script don't know a scene No: %d", selected_scene);
           }
 
