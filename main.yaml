@@ -338,6 +338,27 @@ sensor:
                   - script.execute:
                       id: scene_controller
                       scene_type: 3   # 3 = action
+        - above: !lambda |-
+            return id(departure_distance).state;
+          then:
+            - if:
+                condition:
+                  - lambda: |-
+                      return id(ambient_light).state <
+                            id(light_threshold).state;
+                  - lambda: |-
+                      return id(scene_type_running) != 1;
+                      // trigger always, excluding scene type "music"
+                  - switch.is_off: stop_request
+                then:
+                  - logger.log:
+                      format: "LEAVING triggered. Distance: %.0f"
+                      args: [ 'id(ld2410_distance).state' ]
+                      level: INFO
+                      tag: ld2410_distance
+                  - script.execute:
+                      id: scene_controller
+                      scene_type: 4   # 4 = departure
 
   - platform: bh1750
     name: "Umgebungshelligkeit"
