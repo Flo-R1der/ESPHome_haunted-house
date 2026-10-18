@@ -1,4 +1,7 @@
-# 
+# in this file the scene_controller sets the global values (special handling for music)
+# and calls the scene dispatcher scripts. they can also be called from the api/
+# home assistant service actions for testing purpose (or with more advanced automation)
+# the stop script resets everything.
 
 packages:
   - !include 01_music.yaml
@@ -39,6 +42,35 @@ script:
           }
           // Set the global variable to the selected scene type
           id(scene_type_running) = scene;
+      - delay: 20ms
+      - if:
+          condition:
+            lambda: 'return id(scene_type_running) == 1;'
+          then:
+            - script.execute: 
+                id: scenes_music
+                requested_scene: 0   # 0 = random selection
+      - if:
+          condition:
+            lambda: 'return id(scene_type_running) == 2;'
+          then:
+            - script.execute:
+                id: scenes_approach
+                requested_scene: 0   # 0 = random selection
+      - if:
+          condition:
+            lambda: 'return id(scene_type_running) == 3;'
+          then:
+            - script.execute:
+                id: scenes_action
+                requested_scene: 0   # 0 = random selection
+      - if:
+          condition:
+            lambda: 'return id(scene_type_running) == 4;'
+          then:
+            - script.execute: 
+                id: scenes_departure
+                requested_scene: 0   # 0 = random selection
 
 
   - id: scene_start_manual   # for the api/service action
