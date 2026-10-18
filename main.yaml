@@ -315,6 +315,29 @@ sensor:
       filters:
         - throttle: 15s
         - timeout: 30s
+      on_value_range:
+        - below: !lambda 'return id(action_distance).state;'
+          then:
+            - if:
+                condition:
+                  - lambda: |-
+                      return id(ambient_light).state <
+                             id(light_threshold).state;
+                  - lambda: |-
+                      return id(scene_type_running) == 2;
+                      // only trigger, if scene type "approach" is running
+                      // meaning somebody is approaching the entrance area
+                      // triggers from opening the own door are excluded this way
+                  - switch.is_off: stop_request
+                then:
+                  - logger.log:
+                      format: "ACTION triggered. Distance: %.0f"
+                      args: [ 'id(ld2410_distance).state' ]
+                      level: INFO
+                      tag: ld2410_distance
+                  - script.execute:
+                      id: scene_controller
+                      scene_type: 3   # 3 = action
 
   - platform: bh1750
     name: "Umgebungshelligkeit"
