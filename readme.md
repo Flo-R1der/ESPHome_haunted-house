@@ -2,6 +2,26 @@
 
 ## Hardware
 
+| Qty. | Part                        | Comment |
+| ---- | --------------------------- | ------- |
+| 1    | ESP32 D1 mini               | Controller |
+| 1    | DFPlayer Mini               | Audio playback |
+| 1    | Speaker                     |  |
+| 1    | SD-Card                     | for the MP3s |
+| 1    | LD2410C radar sensor        | Presence detection |
+| 1    | BH1750 ambient light sensor | Ambient light measurement |
+| 1    | WS2812 RGB LED strip        | RGB lighting |
+| 5    | Power LEDs                  | Flash/thunder effect |
+| 1    | Fan (5V)                    | fluttering curtains |
+| 1    | Red buzzer [S1]             | emergency stop |
+| 1    | MH-KC24 step-down converter | power supply (6-32V in / 5V 3A out) |
+| 1    | LM2596 step-down converter  | power supply for Power-LEDs |
+| 2    | Diode [D1-D2]               | reducing voltage to 4,3V |
+| 6    | MOSFET (AO3400) [Q1-Q6]     | load switching |
+| 1    | Resistor (470kΩ) [R1]       | pull-down |
+|      | Wires                       |  |
+
+
 
 ## Pinout
 
@@ -26,23 +46,13 @@
 > GPIO34-36+39 are input only pins  
 > GPIO1+3 must be used with care and can only be used with disable logging via UART
 
+## Electrical Circuit
+
+![electrical-circuit.drawio.svg](electrical-circuit.drawio.svg)
+
 
 ## Trigger 
 
-```mermaid
-flowchart LR
-	START(["LD2410C Radar Sensor<br>on / below distance threshold"])
-    START -->|"CONDITIONS:<br>- no emergency stop?<br>- illumination <= threshold?<br>- music scene running?"| CONTROLLER
-	CONTROLLER["SCENE CONTROLLER<br>- stop current scene<br>- choose scene type<br>- start random scene<br>- set global variables"]
-    CONTROLLER --> MUSIC & APPROACH & ACTION & DEPARTURE
-	MUSIC["MUSIC dispatcher<br>- selects a random music scene"]
-	APPROACH["APPROACH dispatcher<br>- selects a random approach scene"]
-	ACTION["ACTION dispatcher<br>- selects a random action scene"]
-	DEPARTURE["DEPARTURE dispatcher<br>- selects a random departure scene"]
-```
-```mermaid
-flowchart LR
-    END(["LD2410C Radar Sensor<br>off"]) -->
-    STOP["STOP script<br>- stop current scene<br>- turn off everything<br>- reset global variables"]
-```
+![trigger-flow.drawio.svg](trigger-flow.drawio.svg)
+
 
