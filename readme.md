@@ -40,7 +40,7 @@
 | GPIO22 | BH1750 SCL   | Ambient Light      |
 | GPIO23 | WS2812 Data  | RGB LED-Strip      |
 | GPIO26 | Power-LED 5  | Flash/Thunder      |
-| GPIO36 | Red Buzzer   | _(only Input Pin)_ |
+| GPIO27 | Red Buzzer   |                    |
 
 > GPIO7-11 are not allowed to be used (SPI bus for flash memory)  
 > GPIO34-36+39 are input only pins  

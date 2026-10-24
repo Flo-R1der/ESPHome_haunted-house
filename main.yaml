@@ -202,6 +202,19 @@ number:
     restore_value: true
     initial_value: 300
 
+  - platform: template
+    name: "Stop Cooldown"
+    id: emergency_stop_cooldown_time
+    entity_category: config
+    min_value: 0
+    max_value: 20
+    step: 1
+    unit_of_measurement: min
+    mode: slider
+    optimistic: true
+    restore_value: true
+    initial_value: 5
+
 
 button:
   - platform: template
@@ -247,6 +260,43 @@ switch:
       - script.execute: 
           id: stop_scene
           stop_waiting_seconds: 0
+      - script.wait: stop_scene
+      - script.execute: emergency_stop_cooldown
+
+script:
+  - id: emergency_stop_cooldown
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: "return id(emergency_stop_cooldown_time).state == 0;"
+          then:
+            - logger.log:
+                format: "No 'Emergency Stop Cooldown' given, STOP is now permanent!"
+                level: INFO
+            - script.stop: emergency_stop_cooldown
+          else:
+            - logger.log: 
+                format: "'Emergency Stop Cooldown' triggered. Waiting %.0f minute(s)."
+                args: ['id(emergency_stop_cooldown_time).state']
+                level: INFO
+      - delay: 50ms   # wait for the switch 'stop_request' to publish it's state
+      - wait_until:
+          condition:
+            switch.is_off: stop_request
+          timeout: !lambda return id(emergency_stop_cooldown_time).state * 1000 * 60;
+      - if:
+          condition:
+            switch.is_off: stop_request
+          then:
+            - logger.log: 
+                format: "'Emergency Stop' is now disabled, resuming normal operation."
+                level: INFO
+          else:
+            - logger.log:
+                format: "'Emergency Stop Cooldown' is over, resuming normal operation."
+                level: INFO
+            - switch.turn_off: stop_request
 
 
 
@@ -288,6 +338,30 @@ binary_sensor:
                 - script.execute:
                     id: scene_controller
                     scene_type: 2   # 1 = music, 2 = approach + music
+
+  - platform: gpio
+    id: buzzer
+    pin:
+      number: GPIO27
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 50ms
+      - delayed_off: 50ms
+    on_press:
+      then:
+        - lambda: |-
+            if (id(scene_running) != 0) {   // this is the emergency stop
+              id(stop_request).turn_on();
+            } else {
+              id(stop_request).turn_off();   // turn off emergency stop
+              int select_scene = 1 + rand() % 3;   // random scene selection; type 1-3
+              ESP_LOGI("buzzer", "randomly playing scene type: %d", select_scene);
+              id(scene_controller)->execute(select_scene);
+              // pushing the button, while nothing is playing = trigger a random scene
+            }
 
 
 sensor:
