@@ -123,6 +123,11 @@ wifi:
 captive_portal:
 
 
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: Europe/Berlin
+
 uart:
   - id: dfplayer_uart
     tx_pin: GPIO3
@@ -240,6 +245,24 @@ number:
         name: "Radar G1 statische Schwelle"
         disabled_by_default: true
 
+
+datetime:
+  - platform: template
+    id: earliest_trigger
+    type: time
+    name: Zeit von
+    optimistic: yes
+    initial_value: "07:00:00"
+    restore_value: true
+    entity_category: config
+  - platform: template
+    id: latest_trigger
+    type: time
+    name: Zeit bis
+    optimistic: yes
+    initial_value: "23:00:00"
+    restore_value: true
+    entity_category: config
 
 
 button:
@@ -380,6 +403,12 @@ binary_sensor:
                     id(ambient_light).state, id(light_threshold).state);
                   return id(ambient_light).state <= id(light_threshold).state;
               - lambda: |-
+                  ESP_LOGI("time", "now: %02d:%02d:%02d / earliest trigger: %02d:%02d:%02d / latest trigger: %02d:%02d:%02d",
+                           id(sntp_time).now().hour, id(sntp_time).now().minute, id(sntp_time).now().second,
+                           id(earliest_trigger).hour, id(earliest_trigger).minute, id(earliest_trigger).second,
+                           id(latest_trigger).hour, id(latest_trigger).minute, id(latest_trigger).second);
+                  return id(within_time_window).state;
+              - lambda: |-
                   ESP_LOGI("scene_type", "current scene running: %d", id(scene_type_running));
                   return id(scene_type_running) == 0;   // only trigger, if no scene is running
               - switch.is_off: stop_request
@@ -391,6 +420,29 @@ binary_sensor:
               - script.execute:
                   id: scene_controller
                   scene_type: 2   # 1 = music, 2 = approach + music
+
+  - platform: template
+    id: within_time_window
+    internal: true
+    lambda: |-
+      auto now = id(sntp_time).now();
+      if (!now.is_valid()) {
+        ESP_LOGW("time", "Current time is not valid yet");
+        return false;
+      }
+      int current_seconds = now.hour * 3600 + now.minute * 60 + now.second;
+      int earliest_seconds = id(earliest_trigger).hour * 3600 +
+                             id(earliest_trigger).minute * 60 +
+                             id(earliest_trigger).second;
+      int latest_seconds = id(latest_trigger).hour * 3600 +
+                           id(latest_trigger).minute * 60 +
+                           id(latest_trigger).second;
+      // Also supports windows crossing midnight, e.g. 22:00 to 06:00.
+      if (earliest_seconds <= latest_seconds) {
+        return current_seconds >= earliest_seconds && current_seconds <= latest_seconds;
+      } else {
+        return current_seconds >= earliest_seconds || current_seconds <= latest_seconds;
+      }
 
   - platform: gpio
     id: buzzer
@@ -519,6 +571,12 @@ sensor:
                       ESP_LOGI("illumination", "light measured: %f / light threshold: %f",
                         id(ambient_light).state, id(light_threshold).state);
                       return id(ambient_light).state <= id(light_threshold).state;
+                  - lambda: |-
+                      ESP_LOGI("time", "now: %02d:%02d:%02d / earliest trigger: %02d:%02d:%02d / latest trigger: %02d:%02d:%02d",
+                              id(sntp_time).now().hour, id(sntp_time).now().minute, id(sntp_time).now().second,
+                              id(earliest_trigger).hour, id(earliest_trigger).minute, id(earliest_trigger).second,
+                              id(latest_trigger).hour, id(latest_trigger).minute, id(latest_trigger).second);
+                      return id(within_time_window).state;
                   - lambda: |-
                       ESP_LOGI("scene_type", "current scene running: %d", id(scene_type_running));
                       return id(scene_type_running) == 2;
