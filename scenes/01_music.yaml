@@ -27,6 +27,7 @@ script:
           }
           // Set the global variable to the selected scene number
           id(scene_running) = selected_scene;
+          id(scene_running_sensor).publish_state(to_string(selected_scene));
       - lambda: |-
           int selected_scene = id(scene_running);
           if (selected_scene == 10) { id(_10_horror_orchestra).execute();

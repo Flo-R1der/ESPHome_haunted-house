@@ -37,8 +37,8 @@ script:
           int scene = scene_type;
           if (scene_type == 2) {
             // Randomly select MUSIC or APPROACH
-            scene = 1 + (esphome::random_uint32() % 2);
-            ESP_LOGI("scene_controller", "randomly selected scene type: %d", scene_type);
+            scene = 1 + (rand() % 2);
+            ESP_LOGI("scene_controller", "randomly selected scene type: %d", scene);
           }
           // Set the global variable to the selected scene type
           id(scene_type_running) = scene;
@@ -47,6 +47,9 @@ script:
           condition:
             lambda: 'return id(scene_type_running) == 1;'
           then:
+            - text_sensor.template.publish:
+                id: scene_type_sensor
+                state: Music
             - script.execute: 
                 id: scenes_music
                 requested_scene: 0   # 0 = random selection
@@ -54,6 +57,9 @@ script:
           condition:
             lambda: 'return id(scene_type_running) == 2;'
           then:
+            - text_sensor.template.publish:
+                id: scene_type_sensor
+                state: Approach
             - script.execute:
                 id: scenes_approach
                 requested_scene: 0   # 0 = random selection
@@ -61,6 +67,9 @@ script:
           condition:
             lambda: 'return id(scene_type_running) == 3;'
           then:
+            - text_sensor.template.publish:
+                id: scene_type_sensor
+                state: Action
             - script.execute:
                 id: scenes_action
                 requested_scene: 0   # 0 = random selection
@@ -68,6 +77,9 @@ script:
           condition:
             lambda: 'return id(scene_type_running) == 4;'
           then:
+            - text_sensor.template.publish:
+                id: scene_type_sensor
+                state: Departure
             - script.execute: 
                 id: scenes_departure
                 requested_scene: 0   # 0 = random selection
@@ -190,13 +202,19 @@ script:
         - light.turn_off: 
             id: led_attic_2
             transition_length: !lambda 'return id(turn_off_length);'
-        # reset global variables
+        # reset global variables, sensors and numbers
         - globals.set:
             id: scene_type_running
             value: '0'
         - globals.set:
             id: scene_running
             value: '0'
+        - text_sensor.template.publish:
+            id: scene_type_sensor
+            state: "none"
+        - text_sensor.template.publish:
+            id: scene_running_sensor
+            state: "0"
         - number.set:
             id: volume
             value: !lambda 'return id(last_volume);'
@@ -229,4 +247,20 @@ globals:
     type: int
     restore_value: no
     initial_value: '1000'
+
+text_sensor:
+  - platform: template
+    id: scene_running_sensor
+    name: Laufende Szene 
+    lambda: |-
+        return {"0"};
+        // this value will be assigned from scene dispatcher scripts
+        // 0 = no scene selected
+        // n = the number of the scene
+
+  - platform: template
+    id: scene_type_sensor
+    name: Szenen-Typ
+    lambda: |-
+        return {"none"};
 
