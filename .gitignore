@@ -6,3 +6,4 @@ __pycache__
 /secrets.yaml
 *.mp3
 *.bkp
+*.dtmp
