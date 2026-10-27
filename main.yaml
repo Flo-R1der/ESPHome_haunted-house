@@ -215,6 +215,32 @@ number:
     restore_value: true
     initial_value: 5
 
+  - platform: ld2410
+    timeout:
+      name: "Radar Anwesenheit Timeout"
+      entity_category: config
+
+    max_move_distance_gate:
+      name: "Radar Max. Bewegungsdistanz"
+    max_still_distance_gate:
+      name: "Radar Max. statische Distanz"
+
+    g0:
+      move_threshold:
+        name: "Radar G0 Bewegungsschwelle"
+        disabled_by_default: true
+      still_threshold:
+        name: "Radar G0 statische Schwelle"
+        disabled_by_default: true
+    g1:
+      move_threshold:
+        name: "Radar G1 Bewegungsschwelle"
+        disabled_by_default: true
+      still_threshold:
+        name: "Radar G1 statische Schwelle"
+        disabled_by_default: true
+
+
 
 button:
   - platform: template
@@ -262,6 +288,11 @@ switch:
           stop_waiting_seconds: 0
       - script.wait: stop_scene
       - script.execute: emergency_stop_cooldown
+
+  - platform: ld2410
+    engineering_mode:
+      name: "Radar Engineering Mode"
+      entity_category: config
 
 script:
   - id: emergency_stop_cooldown
@@ -314,30 +345,52 @@ binary_sensor:
     name: "Status"
 
   - platform: ld2410
-    has_target:
-      name: "Anwesenheit"
-      filters:
-        - delayed_on: 200ms
-        - delayed_off: 30s
-      on_press:
-        then:
-          - if:
-              condition:
-                - lambda: |-
-                    return id(ambient_light).state <=
-                            id(light_threshold).state;
-                - lambda: |-
-                    return id(scene_type_running) == 0;
-                    // only trigger, if no scene is running
-                - switch.is_off: stop_request
-              then:
-                - logger.log:
-                    format: "APPROACH triggered"
-                    level: INFO
-                    tag: ld2410_presence
-                - script.execute:
-                    id: scene_controller
-                    scene_type: 2   # 1 = music, 2 = approach + music
+    has_moving_target:
+      name: "Radar Bewegtes Ziel"
+      id: radar_moving_target
+      entity_category: "diagnostic"
+    has_still_target:
+      name: "Radar Statisches Ziel"
+      id: radar_static_target
+      entity_category: "diagnostic"
+
+  - platform: template
+    name: "Anwesenheit"
+    id: presence_sensor
+    lambda: |-
+      if (id(radar_moving_target).state &&
+          id(radar_moving_distance).state > 0 &&
+          id(radar_moving_energy).state > 0 ||
+          id(radar_static_target).state &&
+          id(radar_static_distance).state > 0 &&
+          id(radar_static_energy).state > 0 ) {
+        return true;
+      } else {
+        return false;
+      }
+    filters:
+      - delayed_on: 1s
+      - delayed_off: 10s
+    on_press:
+      then:
+        - if:
+            condition:
+              - lambda: |-
+                  ESP_LOGI("illumination", "light measured: %f / light threshold: %f",
+                    id(ambient_light).state, id(light_threshold).state);
+                  return id(ambient_light).state <= id(light_threshold).state;
+              - lambda: |-
+                  ESP_LOGI("scene_type", "current scene running: %d", id(scene_type_running));
+                  return id(scene_type_running) == 0;   // only trigger, if no scene is running
+              - switch.is_off: stop_request
+            then:
+              - logger.log:
+                  format: "APPROACH triggered"
+                  level: INFO
+                  tag: ld2410_presence
+              - script.execute:
+                  id: scene_controller
+                  scene_type: 2   # 1 = music, 2 = approach + music
 
   - platform: gpio
     id: buzzer
@@ -382,22 +435,92 @@ sensor:
     device_class: ""
     icon: mdi:wifi
 
+  - platform: bh1750
+    name: "Umgebungshelligkeit"
+    id: ambient_light
+    address: 0x23
+    update_interval: 30s
+
   - platform: ld2410
+    moving_distance:
+      name: "Radar Bewegung Entfernung"
+      id: radar_moving_distance
+      entity_category: "diagnostic"
+      filters:
+        - throttle_with_priority:
+            timeout: 10s
+            value:
+              - nan
+              - 0
+    still_distance:
+      name: "Radar statisch Entfernung"
+      id: radar_static_distance
+      entity_category: "diagnostic"
+      filters:
+        - throttle_with_priority:
+            timeout: 10s
+            value:
+              - nan
+              - 0
+    moving_energy:
+      name: "Radar Bewegung Energie"
+      id: radar_moving_energy
+      entity_category: "diagnostic"
+      filters:
+        - throttle_with_priority:
+            timeout: 10s
+            value:
+              - nan
+              - 0
+    still_energy:
+      name: "Radar statisch Energie"
+      id: radar_static_energy
+      entity_category: "diagnostic"
+      filters:
+        - throttle_with_priority:
+            timeout: 10s
+            value:
+              - nan
+              - 0
+    g0:
+      move_energy:
+        name: "Radar G0 Bewegung"
+        entity_category: "diagnostic"
+        disabled_by_default: true
+      still_energy:
+        name: "Radar G0 statisch"
+        entity_category: "diagnostic"
+        disabled_by_default: true
+    g1:
+      move_energy:
+        name: "Radar G1 Bewegung"
+        entity_category: "diagnostic"
+        disabled_by_default: true
+      still_energy:
+        name: "Radar G1 statisch"
+        entity_category: "diagnostic"
+        disabled_by_default: true
+
     detection_distance:
       name: "Bewegungserkennung Abstand"
       id: ld2410_distance
       filters:
-        - throttle: 15s
-        - timeout: 30s
+        - throttle_with_priority:
+            timeout: 10s
+            value:
+              - nan
+              - 0
       on_value_range:
         - below: !lambda 'return id(action_distance).state;'
           then:
             - if:
                 condition:
                   - lambda: |-
-                      return id(ambient_light).state <
-                             id(light_threshold).state;
+                      ESP_LOGI("illumination", "light measured: %f / light threshold: %f",
+                        id(ambient_light).state, id(light_threshold).state);
+                      return id(ambient_light).state <= id(light_threshold).state;
                   - lambda: |-
+                      ESP_LOGI("scene_type", "current scene running: %d", id(scene_type_running));
                       return id(scene_type_running) == 2;
                       // only trigger, if scene type "approach" is running
                       // meaning somebody is approaching the entrance area
@@ -433,10 +556,4 @@ sensor:
                   - script.execute:
                       id: scene_controller
                       scene_type: 4   # 4 = departure
-
-  - platform: bh1750
-    name: "Umgebungshelligkeit"
-    id: ambient_light
-    address: 0x23
-    update_interval: 30s
 
