@@ -314,8 +314,9 @@ light:
 
   - platform: esp32_rmt_led_strip
     id: rgb_led_strip
-    name: "RGB LED Strip"
+    name: "LED Streifen"
     icon: mdi:led-strip-variant
+    entity_category: diagnostic
     pin: GPIO23
     num_leds: 54
     rgb_order: GRB
